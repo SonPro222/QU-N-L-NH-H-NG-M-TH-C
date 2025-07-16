@@ -4,7 +4,9 @@
  */
 package ui.manager;
 
+import dao.NhanVienDAO;
 import dao.UserDAO;
+import dao.impl.NhanVienDAOImpl;
 import dao.impl.UserDAOImpl;
 import entity.User;
 import java.util.List;
@@ -41,7 +43,8 @@ public void fillToTable() {
         model.addRow(new Object[]{
             user.getTendangnhap(),
             maskedPassword,
-            user.getVaitro() // Thêm cột quyền
+            user.getVaitro(),
+            user.getMaNV()// Thêm cột quyền
         });
     }
 
@@ -58,51 +61,24 @@ public void fillToTable() {
     });
 }
 
-//    public void fillToTable() {
-//        DefaultTableModel model = (DefaultTableModel) tblTaiKhoan.getModel();
-//        model.setRowCount(0); // Xóa dữ liệu cũ
-//        UserDAO dao = new UserDAOImpl();
-//
-//        List<User> list = dao.findAll(); // lấy danh sách user từ DB
-//        for (User user : list) {
-//            String maskedPassword = "*".repeat(user.getMatkhau().length()); // che mật khẩu
-//            model.addRow(new Object[]{
-//                user.getTendangnhap(),
-//                maskedPassword
-//            });
-//        }
-//
-//        // Đảm bảo cột mật khẩu luôn che (dù load lại)
-//        tblTaiKhoan.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-//            @Override
-//            protected void setValue(Object value) {
-//                if (value != null) {
-//                    setText(value.toString()); // đã được che ở trên
-//                } else {
-//                    setText("");
-//                }
-//            }
-//        });
-//    }
+
 public void addAccount() {
     String username = txtUsername.getText().trim();
     String password = new String(txtPassword.getPassword()).trim();
     String confirm = new String(txtConfirmPassword.getPassword()).trim();
+    String maNVStr = txtMaNV.getText().trim(); // Giả sử có ô nhập mã NV
 
     // Kiểm tra trống các trường nhập
-    if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
+    if (username.isEmpty() || password.isEmpty() || confirm.isEmpty() || maNVStr.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
         return;
     }
 
-    // Kiểm tra xem có chọn quyền hay chưa (cả hai đều không được chọn)
+    // Kiểm tra vai trò
     if (!chkManager.isSelected() && !chkManager1.isSelected()) {
         JOptionPane.showMessageDialog(this, "Vui lòng chọn vai trò (quyền)!");
         return;
     }
-
-    // Gán vai trò dựa vào checkbox
-    String role = chkManager.isSelected() ? "Quản lý" : "Nhân viên";
 
     // Kiểm tra mật khẩu khớp
     if (!password.equals(confirm)) {
@@ -110,24 +86,45 @@ public void addAccount() {
         return;
     }
 
-    // Kiểm tra tài khoản đã tồn tại
-    UserDAO dao = new UserDAOImpl();
-    if (dao.exists(username)) {
+    // Kiểm tra username đã tồn tại
+    UserDAO userDAO = new UserDAOImpl();
+    if (userDAO.exists(username)) {
         JOptionPane.showMessageDialog(this, "Tài khoản đã tồn tại!");
         return;
     }
 
-    // Tạo tài khoản mới
+    // Parse mã nhân viên
+    int maNV;
+    try {
+        maNV = Integer.parseInt(maNVStr);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã nhân viên phải là số!");
+        return;
+    }
+
+    // Kiểm tra mã nhân viên có tồn tại
+    NhanVienDAO nvDAO = new NhanVienDAOImpl();
+    if (nvDAO.findById(maNV) == null) {
+        JOptionPane.showMessageDialog(this, "Mã nhân viên không tồn tại!");
+        return;
+    }
+
+    // Gán vai trò
+    String role = chkManager.isSelected() ? "Quản lý" : "Nhân viên";
+
+    // Tạo đối tượng User
     User user = User.builder()
             .tendangnhap(username)
             .matkhau(password)
             .vaitro(role)
+            .maNV(maNV) // Gán mã nhân viên
             .build();
 
-    dao.create(user);
+    userDAO.create(user);
     JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
-    fillToTable(); // Nếu có phương thức hiển thị lại bảng
+    fillToTable(); // Cập nhật lại bảng nếu có
 }
+
 
     public void XoaUser() {
     int row = tblTaiKhoan.getSelectedRow();
@@ -178,6 +175,8 @@ public void addAccount() {
         chkManager1 = new javax.swing.JCheckBox();
         chkManager = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
+        txtMaNV = new javax.swing.JPasswordField();
+        jLabel8 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -191,17 +190,17 @@ public void addAccount() {
 
         tblTaiKhoan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Tên Tài Khoản", "Mật Khẩu", "Quyền"
+                "Tên Tài Khoản", "Mật Khẩu", "Quyền", "Mã NV"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -258,6 +257,15 @@ public void addAccount() {
 
         jLabel7.setText("Quyền");
 
+        txtMaNV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMaNVActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel8.setText("Mã Nhân Viên");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -273,27 +281,31 @@ public void addAccount() {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(71, 71, 71)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtUsername)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(101, 101, 101)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(chkShowPassword)
-                    .addComponent(txtPassword)
-                    .addComponent(txtConfirmPassword)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(chkManager, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(chkManager1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtUsername, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
+                            .addComponent(txtPassword)
+                            .addComponent(txtConfirmPassword))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(27, 27, 27)
+                            .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(chkShowPassword)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                                .addComponent(chkManager, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(chkManager1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtMaNV, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,10 +315,7 @@ public void addAccount() {
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -317,24 +326,34 @@ public void addAccount() {
                         .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(17, 17, 17)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(7, 7, 7)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtMaNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(chkManager1)
                             .addComponent(chkManager)
                             .addComponent(jLabel7))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(chkShowPassword)
-                        .addGap(18, 18, 18)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnClear)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addContainerGap(36, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                        .addComponent(chkShowPassword))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton2)
+                            .addComponent(btnClear))
+                        .addGap(15, 15, 15))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addGap(24, 24, 24))))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 50, 810, 410));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 50, 810, 450));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/hinhnen.png"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 540));
@@ -369,6 +388,10 @@ public void addAccount() {
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
        clear();
     }//GEN-LAST:event_btnClearActionPerformed
+
+    private void txtMaNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaNVActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMaNVActionPerformed
 
     /**
      * @param args the command line arguments
@@ -427,10 +450,12 @@ public void addAccount() {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblTaiKhoan;
     private javax.swing.JPasswordField txtConfirmPassword;
+    private javax.swing.JPasswordField txtMaNV;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables

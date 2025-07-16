@@ -16,18 +16,23 @@ import ui.manager.QuanLyNhaHang;
 import util.XAuth;
 import util.XDialog;
 
-public class Login extends javax.swing.JDialog  {
-  public boolean isSuccessLogin = false;
+public class Login extends javax.swing.JDialog {
 
     public Login(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setTitle("Đăng Nhập");
-         setResizable(false);  
-         setLocationRelativeTo(null);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                System.exit(0);
+            }
+        });
     }
-     UserDAO dao = new UserDAOImpl();
-     NhanVienDAO nvDAO = new NhanVienDAOImpl();
+    UserDAO dao = new UserDAOImpl();
+    NhanVienDAO nvDAO = new NhanVienDAOImpl();
 
     private void login() {
         String username = txtUsername.getText().trim();
@@ -35,26 +40,18 @@ public class Login extends javax.swing.JDialog  {
 
         if (username.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập tên đăng nhập!");
-            txtUsername.requestFocus();
             return;
         }
 
         if (password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
-            txtPassword.requestFocus();
             return;
         }
 
-        // Kiểm tra tài khoản tồn tại
-        if (!dao.exists(username)) {
-            JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại!");
-            return;
-        }
-
-        // Lấy user từ DB
+        // Tìm User từ tên đăng nhập
         User user = dao.findById(username);
         if (user == null) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy tài khoản!");
+            JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại!");
             return;
         }
 
@@ -62,34 +59,29 @@ public class Login extends javax.swing.JDialog  {
             JOptionPane.showMessageDialog(this, "Sai mật khẩu!");
             return;
         }
-        if (!user.getTendangnhap().equals(username)) {
-            JOptionPane.showMessageDialog(this, "Sai tài khoản!");
-            return;
-        }
 
-        // Lấy thông tin nhân viên từ bảng NHANVIEN bằng TenDangNhap
-        NhanVien nhanVien = nvDAO.findNhanVienByTenDangNhap(user.getTendangnhap());
-        if (nhanVien == null) {
+        NhanVien nv = nvDAO.findById(user.getMaNV());
+        if (nv == null) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!");
             return;
         }
 
-        // Lưu thông tin nhân viên vào Auth
-        Auth.nhanVienDangNhap = nhanVien;
-         XAuth.user = user;
-        
-      isSuccessLogin = true;
-this.dispose(); // sau khi set biến mới dispose
-
+        Auth.nhanVienDangNhap = nv;
+        XAuth.user = user;
+        System.out.println("tên" + nv.getTenNV());
+        System.out.println(">> Vai trò sau login: " + XAuth.user.getVaitro());
+        System.out.println(">> Tên đăng nhập: " + XAuth.user.getTendangnhap());
+    
+        JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+        this.dispose(); // đóng form
     }
- public void exit() {
+
+    public void exit() {
         if (XDialog.confirm("Bạn muốn kết thúc?")) {
             System.exit(0);
-        }}
+        }
+    }
 
-
-
-  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -177,23 +169,23 @@ this.dispose(); // sau khi set biến mới dispose
     }//GEN-LAST:event_txtPasswordActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      login();
+        login();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void chkShowPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkShowPasswordActionPerformed
-      chkShowPassword.addActionListener(e -> {
-    if (chkShowPassword.isSelected()) {
-        txtPassword.setEchoChar((char) 0); 
-    } else {
-        txtPassword.setEchoChar('*');  
-    }
-});
+        chkShowPassword.addActionListener(e -> {
+            if (chkShowPassword.isSelected()) {
+                txtPassword.setEchoChar((char) 0);
+            } else {
+                txtPassword.setEchoChar('*');
+            }
+        });
     }//GEN-LAST:event_chkShowPasswordActionPerformed
 
     private void txtPasswordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyReleased
-           if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             login();
-        } 
+        }
     }//GEN-LAST:event_txtPasswordKeyReleased
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

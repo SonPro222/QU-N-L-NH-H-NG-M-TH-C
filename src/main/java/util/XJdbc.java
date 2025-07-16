@@ -21,7 +21,6 @@ public class XJdbc {
 
   private static final  String URL = "jdbc:sqlserver://localhost:1433;databaseName=QUANLYNHAHANGAMTHUCVIETNAM;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8";
 
-          //String URL = "jdbc:sqlserver://localhost:1433;databaseName=QUANLYNHAHANGAMTHUCVIETNAM;encrypt=true;trustServerCertificate=true;";
     private static final String USER = "sa";
     private static final String PASSWORD = "123456";
     static {

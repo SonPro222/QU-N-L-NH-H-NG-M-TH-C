@@ -84,11 +84,11 @@ private void fillChiTietHoaDon(int maHD) {
     List<HoaDonChiTiet> list = chiTietDAO.findByHoaDonId(maHD);
     for (HoaDonChiTiet ct : list) {
         Object[] row = {
+            ct.getMaHD(),
             ct.getMaChiTiet(),
             ct.getTenMon(),
             ct.getSoLuong(),
-            ct.getDonGia(),
-            ct.getSoLuong() * ct.getDonGia()
+            ct.getDonGia()
         };
         model.addRow(row);
     }

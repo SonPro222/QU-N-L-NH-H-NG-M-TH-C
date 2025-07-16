@@ -10,8 +10,8 @@ import entity.User;
  *
  * @author ACER
  */
-public class XAuth {
-    public static User user = User.builder()
-            .tendangnhap(null)
-            .build(); // biến user này sẽ được thay thế sau khi đăng nhập
-}
+    public class XAuth {
+        public static User user = User.builder()
+                .tendangnhap(null)
+                .build(); // biến user này sẽ được thay thế sau khi đăng nhập
+    }

@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import ui.manager.QuanLyMonAn;
 import ui.manager.QuanLyTaiKhoan;
 import ui.manager.BanAn;
+import ui.manager.QuanLyChamCongNhanVien;
 import ui.manager.xLichSuGiaoDich;
 import ui.manager.QuanLyChiTieu;
 import ui.manager.QuanLyNhanVien;
@@ -52,5 +53,8 @@ public interface QuanLyNhaHangController {
     }
     default void showLichSuGiaoDich(JFrame frame){
         this.showJDialog(new xLichSuGiaoDich(frame, true));
+    }
+    default void showQuanLyChamCong(JFrame frame){
+        this.showJDialog(new QuanLyChamCongNhanVien(frame, true));
     }
 }

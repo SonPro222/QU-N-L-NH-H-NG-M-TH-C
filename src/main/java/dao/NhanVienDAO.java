@@ -10,8 +10,9 @@ public interface NhanVienDAO {
     NhanVien findById(Integer id);
     List<NhanVien> findAll();
     List<NhanVien> selectBySql(String sql, Object... args);
-    
+public List<Object[]> findAllWithUsername();
+public int insertAndReturnId(NhanVien nv);
     // thêm hàm này để login hoạt động đúng
-    NhanVien findByTenDangNhap(String tenDangNhap);
-    public NhanVien findNhanVienByTenDangNhap(String tendangnhap);
+//    NhanVien findByTenDangNhap(String tenDangNhap);
+//    public NhanVien findNhanVienByTenDangNhap(String tendangnhap);
 }

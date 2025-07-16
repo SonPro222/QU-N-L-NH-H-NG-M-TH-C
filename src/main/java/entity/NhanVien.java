@@ -11,5 +11,4 @@ public class NhanVien {
     private double luong;
     private int soNgayLam;
     private int soNgayNghi;
-    private String tenDangNhap;
 }
