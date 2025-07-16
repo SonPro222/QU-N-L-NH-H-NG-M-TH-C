@@ -58,19 +58,19 @@ public class Login extends javax.swing.JDialog {
         if (!user.getMatkhau().equals(password)) {
             JOptionPane.showMessageDialog(this, "Sai mật khẩu!");
             return;
+        }   
+        if (!user.getTendangnhap().equals(username)) {
+            JOptionPane.showMessageDialog(this, "Sai tài khoản");
+            return;
         }
-
         NhanVien nv = nvDAO.findById(user.getMaNV());
         if (nv == null) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!");
             return;
         }
 
         Auth.nhanVienDangNhap = nv;
         XAuth.user = user;
-        System.out.println("tên" + nv.getTenNV());
-        System.out.println(">> Vai trò sau login: " + XAuth.user.getVaitro());
-        System.out.println(">> Tên đăng nhập: " + XAuth.user.getTendangnhap());
+      
     
         JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
         this.dispose(); // đóng form
@@ -102,7 +102,7 @@ public class Login extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("ẨM THỰC VIỆT NAM");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 20, 246, -1));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 20, 250, -1));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
