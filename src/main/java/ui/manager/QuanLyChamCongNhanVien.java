@@ -21,71 +21,68 @@ import javax.swing.table.DefaultTableModel;
 import util.TimeRange;
 import util.XDate;
 
-/**
- *
- * @author ACER
- */
 public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
 
     NhanVienDAO nhanVienDAO = new NhanVienDAOImpl(); // khai báo ngoài hàm nếu cần
     ChamCongDAO chamCongDAO = new ChamCongDAOImpl(); // DAO chấm công
     private String ngayChamCongCu = null;
     boolean daChamCongHomNay = false;
+    LocalDate now = LocalDate.now();
+    int thang = now.getMonthValue();
+    int nam = now.getYear();
 
     public QuanLyChamCongNhanVien(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         fillTableChamCongTheoNhanVien();
         fillNgayHienTai();
-        LocalDate now = LocalDate.now();
-        int thang = now.getMonthValue();
-        int nam = now.getYear();
+
         fillBangLuongTheoThang(thang, nam);
     }
     //========== fill dữ liệu nhân viên =============/
 
     public void fillTableChamCongTheoNhanVien() {
-    String ngayHienTaiStr = XDate.format(XDate.now(), "yyyy-MM-dd");
-    Date ngayHienTai = XDate.parse(ngayHienTaiStr, "yyyy-MM-dd");
+        String ngayHienTaiStr = XDate.format(XDate.now(), "yyyy-MM-dd");
+        Date ngayHienTai = XDate.parse(ngayHienTaiStr, "yyyy-MM-dd");
 
-    // Nếu chưa fill hoặc đã sang ngày mới
-    if (ngayChamCongCu == null || !ngayChamCongCu.equals(ngayHienTaiStr)) {
-        DefaultTableModel model = (DefaultTableModel) tblChamCong.getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
+        // Nếu chưa fill hoặc đã sang ngày mới
+        if (ngayChamCongCu == null || !ngayChamCongCu.equals(ngayHienTaiStr)) {
+            DefaultTableModel model = (DefaultTableModel) tblChamCong.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
 
-        List<NhanVien> listNV = nhanVienDAO.findAll();
-        boolean tatCaDaCham = true; // giả định ban đầu
+            List<NhanVien> listNV = nhanVienDAO.findAll();
+            boolean tatCaDaCham = true; // giả định ban đầu
 
-        for (NhanVien nv : listNV) {
-            boolean daCham = chamCongDAO.exists(nv.getMaNV(), ngayHienTai);
+            for (NhanVien nv : listNV) {
+                boolean daCham = chamCongDAO.exists(nv.getMaNV(), ngayHienTai);
 
-            if (!daCham) {
-                // Nếu chưa chấm công thì thêm vào bảng
-                model.addRow(new Object[]{
-                    nv.getMaNV(),
-                    nv.getTenNV(),
-                    ngayHienTai,
-                    false, // mặc định chưa đi làm
-                    ""     // ghi chú trống
-                });
-                tatCaDaCham = false; // còn người chưa chấm công
+                if (!daCham) {
+                    // Nếu chưa chấm công thì thêm vào bảng
+                    model.addRow(new Object[]{
+                        nv.getMaNV(),
+                        nv.getTenNV(),
+                        ngayHienTai,
+                        false, // mặc định chưa đi làm
+                        "" // ghi chú trống
+                    });
+                    tatCaDaCham = false; // còn người chưa chấm công
+                }
             }
+
+            // Nếu tất cả đã chấm công rồi thì disable nút
+            btnChamCong.setEnabled(!tatCaDaCham);
+            tblChamCong.setEnabled(!tatCaDaCham); // khóa bảng nếu đã chấm xong
+
+            // Ghi nhớ ngày đã fill để không lặp lại
+            ngayChamCongCu = ngayHienTaiStr;
         }
-
-        // Nếu tất cả đã chấm công rồi thì disable nút
-        btnChamCong.setEnabled(!tatCaDaCham);
-        tblChamCong.setEnabled(!tatCaDaCham); // khóa bảng nếu đã chấm xong
-
-        // Ghi nhớ ngày đã fill để không lặp lại
-        ngayChamCongCu = ngayHienTaiStr;
     }
-}
-
 
     public void fillNgayHienTai() {
         Date ngayHienTai = TimeRange.today().getBegin(); // Lấy ngày bắt đầu hôm nay
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // format ngày
         txtNgayHienTai.setText(sdf.format(ngayHienTai)); // Hiển thị lên textfield
+        txtNgayHienTai.setEnabled(false);
     }
 
     private void chamCongNhanVien() {
@@ -122,7 +119,8 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
 
         // KHÓA KHẢ NĂNG CHỈNH SỬA BẢNG SAU KHI CHẤM
         tblChamCong.setEnabled(false);
-        fillBangLuongTheoThang(WIDTH, WIDTH);
+        fillBangLuongTheoThang(thang, nam); // nếu không bị che khuất bởi cùng tên biến
+
     }
 
     public class ChamCongService {
@@ -168,7 +166,6 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
             return ketQua;
         }
 
-        // Tìm ngày chấm công đầu tiên
         private Date findNgayBatDau(int maNV) {
             return chamCongDAO.findNgayBatDau(maNV); // cần viết trong DAO
         }
@@ -194,7 +191,6 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblChamCong = new javax.swing.JTable();
         btnChamCong = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         txtNgayHienTai = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -230,7 +226,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
                 java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false
+                false, false, false, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -252,9 +248,6 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
             }
         });
         jPanel1.add(btnChamCong, new org.netbeans.lib.awtextra.AbsoluteConstraints(682, 260, 250, -1));
-
-        jButton2.setText("Sửa Lại");
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 260, 220, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Chấm Công Ngày :");
@@ -284,7 +277,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         });
         jScrollPane2.setViewportView(tblBangLuong);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 940, 200));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 940, 210));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 940, 500));
 
@@ -301,7 +294,6 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChamCong;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
