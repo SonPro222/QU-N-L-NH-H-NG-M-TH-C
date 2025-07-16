@@ -32,6 +32,7 @@ private NhanVienDAO nhanVienDAO = new NhanVienDAOImpl();
         setResizable(false);
         setLocationRelativeTo(null);
         fillTableNhanVien();
+        setTitle("Quản Lý Nhân Viên");
         
     }
  private void fillTableNhanVien() {

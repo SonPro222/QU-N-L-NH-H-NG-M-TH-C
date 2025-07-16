@@ -5,6 +5,7 @@ import dao.impl.DoanhThuDAOImpl;
 import entity.DoanhThu;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import javax.swing.*;
@@ -97,23 +98,31 @@ public class ThongKeDoanhThu extends JDialog {
         }
     }
 
-    private void loadTableData(Integer thang, Integer nam) {
-        List<DoanhThu> list = doanhThuDAO.findByMonthYear(thang, nam);
-        DefaultTableModel model = (DefaultTableModel) tblDoanhThu.getModel();
-        model.setRowCount(0);
-        double tongThu = 0, tongChi = 0;
-        for (DoanhThu dt : list) {
-            tongThu += dt.getTongThu();
-            tongChi += dt.getTongChi();
-            model.addRow(new Object[]{
-                dt.getNgay(), dt.getTongThu(), dt.getTongChi(), (dt.getTongThu() - dt.getTongChi()), dt.getGhiChu()
-            });
-        }
+   private void loadTableData(Integer thang, Integer nam) {
+    List<DoanhThu> list = doanhThuDAO.findByMonthYear(thang, nam);
+    DefaultTableModel model = (DefaultTableModel) tblDoanhThu.getModel();
+    model.setRowCount(0);
 
-        lblTongThu.setText("Tổng thu: " + String.format("%,.0f VND", tongThu));
-        lblTongChi.setText("Tổng chi: " + String.format("%,.0f VND", tongChi));
-        lblLoiNhuan.setText("Lợi nhuận: " + String.format("%,.0f VND", (tongThu - tongChi)));
+    double tongThu = 0, tongChi = 0;
+    DecimalFormat df = new DecimalFormat("#,###");
+
+    for (DoanhThu dt : list) {
+        tongThu += dt.getTongThu();
+        tongChi += dt.getTongChi();
+        model.addRow(new Object[]{
+            dt.getNgay(),
+            df.format(dt.getTongThu()) + " VND",
+            df.format(dt.getTongChi()) + " VND",
+            df.format(dt.getTongThu() - dt.getTongChi()) + " VND",
+            dt.getGhiChu()
+        });
     }
+
+    lblTongThu.setText("Tổng thu: " + df.format(tongThu) + " VND");
+    lblTongChi.setText("Tổng chi: " + df.format(tongChi) + " VND");
+    lblLoiNhuan.setText("Lợi nhuận: " + df.format(tongThu - tongChi) + " VND");
+}
+
 
     private void locDoanhThu() {
         Integer thang = cboThang.getSelectedIndex() == 0 ? null : cboThang.getSelectedIndex();
@@ -146,7 +155,5 @@ public class ThongKeDoanhThu extends JDialog {
             JOptionPane.showMessageDialog(this, "Lỗi xuất Excel: " + e.getMessage());
         }
     }
-
-
 
 }

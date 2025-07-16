@@ -92,8 +92,8 @@ public class Login extends javax.swing.JDialog {
         txtPassword = new javax.swing.JPasswordField();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        chkShowPassword = new javax.swing.JCheckBox();
         txtUsername = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -102,7 +102,7 @@ public class Login extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("ẨM THỰC VIỆT NAM");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 20, 250, -1));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 20, 250, 40));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -144,19 +144,17 @@ public class Login extends javax.swing.JDialog {
         });
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 300, 101, 33));
 
-        chkShowPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        chkShowPassword.setForeground(new java.awt.Color(255, 255, 255));
-        chkShowPassword.setText("Hiện Thị Mật Khẩu");
-        chkShowPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chkShowPasswordActionPerformed(evt);
-            }
-        });
-        getContentPane().add(chkShowPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 260, -1, -1));
-
         txtUsername.setBackground(new java.awt.Color(153, 153, 153));
         txtUsername.setForeground(new java.awt.Color(0, 0, 0));
         getContentPane().add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 150, 210, 30));
+
+        jCheckBox1.setText("Hiển Thị Mật Khẩu");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 260, -1, -1));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/login1.jpg"))); // NOI18N
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 580, 360));
@@ -172,16 +170,6 @@ public class Login extends javax.swing.JDialog {
         login();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void chkShowPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkShowPasswordActionPerformed
-        chkShowPassword.addActionListener(e -> {
-            if (chkShowPassword.isSelected()) {
-                txtPassword.setEchoChar((char) 0);
-            } else {
-                txtPassword.setEchoChar('*');
-            }
-        });
-    }//GEN-LAST:event_chkShowPasswordActionPerformed
-
     private void txtPasswordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             login();
@@ -192,10 +180,20 @@ public class Login extends javax.swing.JDialog {
         exit();// TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+         jCheckBox1.addActionListener(e -> {
+            if (jCheckBox1.isSelected()) {
+                txtPassword.setEchoChar((char) 0);
+            } else {
+                txtPassword.setEchoChar('*');
+            }
+        });  // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox chkShowPassword;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

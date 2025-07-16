@@ -54,6 +54,7 @@ public class QuanLyMonAn extends javax.swing.JDialog {
         setTitle("Quản Lý Món An");
         setResizable(false);
         setLocationRelativeTo(null);
+        
         fillToTable();
         fillChiTietMonAnTheoMonAn(ABORT);
         tblBangLoaiMon.setFont(new Font("Arial", Font.BOLD, 20));

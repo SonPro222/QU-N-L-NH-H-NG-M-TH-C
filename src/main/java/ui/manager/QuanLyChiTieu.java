@@ -28,81 +28,10 @@ public class QuanLyChiTieu extends javax.swing.JDialog{
         super(parent, modal);
         initComponents();
         fillTableChiTieu();
+           setResizable(false);          // <-- không cho kéo giãn
+        setLocationRelativeTo(null);
+        setTitle("Quản lý Chi Tiêu");
     }
-//    public void addChiTieu(){
-//   try {
-//        // Lấy và xử lý dữ liệu đầu vào
-//        String soTienStr = txtSoTien.getText().trim();
-//        String moTa = txtGhiChu.getText().trim();
-//
-//        // 🔴 Kiểm tra trống
-//        if (soTienStr.isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "⚠ Vui lòng nhập số tiền!");
-//            txtSoTien.requestFocus();
-//            return;
-//        }
-//
-//        // 🔴 Kiểm tra có phải số hợp lệ không
-//        float soTien;
-//        try {
-//            soTien = Float.parseFloat(soTienStr);
-//            if (soTien <= 0) {
-//                JOptionPane.showMessageDialog(this, "⚠ Số tiền phải lớn hơn 0!");
-//                txtSoTien.requestFocus();
-//                return;
-//            }
-//        } catch (NumberFormatException e) {
-//            JOptionPane.showMessageDialog(this, "⚠ Số tiền phải là số!");
-//            txtSoTien.requestFocus();
-//            return;
-//        }
-//
-//      
-//        int choice = JOptionPane.showConfirmDialog(this,
-//            "Bạn có chắc chắn muốn thêm chi tiêu với số tiền: " + soTien + " không?",
-//            "Xác nhận thêm", JOptionPane.YES_NO_OPTION);
-//
-//        if (choice != JOptionPane.YES_OPTION) {
-//            return; // Người dùng không đồng ý
-//        }
-//
-//        // ✅ Tạo đối tượng chi tiêu
-//        ChiTieu ct = new ChiTieu();
-//        ct.setNgay(java.time.LocalDate.now().toString()); // yyyy-MM-dd
-//        ct.setSoTien(soTien);
-//        ct.setMoTa(moTa);
-//
-//        // ✅ Gọi DAO để thêm
-//        ChiTieuDao dao = new ChiTieuDaoImpl();
-//        dao.create(ct);
-//
-//        JOptionPane.showMessageDialog(this, "  Thêm chi tiêu thành công!");
-////        clearFormChiTieu();
-//        fillTableChiTieu();
-//
-//    } catch (Exception e) {
-//        JOptionPane.showMessageDialog(this, " Lỗi: " + e.getMessage());
-//        e.printStackTrace();
-//    }}
-//    public void fillTableChiTieu() {
-//    DefaultTableModel model = (DefaultTableModel) tblChiTieu.getModel();
-//    model.setRowCount(0); // Xóa bảng trước khi đổ mới
-//   
-//    ChiTieuDao dao = new ChiTieuDaoImpl(); // ✅ CHUẨN
-//
-//    List<ChiTieu> list = dao.findAll(); // Gọi hàm lấy toàn bộ chi tiêu
-//
-//    for (ChiTieu ct : list) {
-//        Object[] row = {
-//            ct.getMaChiTieu(),
-//            ct.getNgay(),
-//            ct.getSoTien(),
-//            ct.getMoTa()
-//        };
-//        model.addRow(row);
-//    }
-//}
-   
 public void addChiTieu() {
     try {
         // Lấy và xử lý dữ liệu đầu vào

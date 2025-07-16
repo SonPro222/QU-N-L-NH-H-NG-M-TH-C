@@ -36,8 +36,11 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         initComponents();
         fillTableChamCongTheoNhanVien();
         fillNgayHienTai();
-
+        
         fillBangLuongTheoThang(thang, nam);
+           setResizable(false);          // <-- không cho kéo giãn
+        setLocationRelativeTo(null);
+        setTitle("Quản Lý Chấm Công");
     }
     //========== fill dữ liệu nhân viên =============/
 
@@ -195,6 +198,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         txtNgayHienTai = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblBangLuong = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -247,7 +251,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
                 btnChamCongActionPerformed(evt);
             }
         });
-        jPanel1.add(btnChamCong, new org.netbeans.lib.awtextra.AbsoluteConstraints(682, 260, 250, -1));
+        jPanel1.add(btnChamCong, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 260, 300, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Chấm Công Ngày :");
@@ -277,7 +281,10 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         });
         jScrollPane2.setViewportView(tblBangLuong);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 940, 210));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 940, 170));
+
+        jButton1.setText("Trả Lương Nhân Viên");
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 470, 290, -1));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 940, 500));
 
@@ -294,6 +301,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChamCong;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

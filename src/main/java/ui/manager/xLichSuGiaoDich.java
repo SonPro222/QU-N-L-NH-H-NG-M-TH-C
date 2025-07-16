@@ -38,12 +38,7 @@ public class xLichSuGiaoDich extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         fillTableHoaDon(); // <-- Gọi hàm fill bảng hóa đơn khi mở form
 
-//        tblLSHoaDon.getSelectionModel().addListSelectionListener(e -> {
-//            int row = tblLSHoaDon.getSelectedRow();
-//            if (row != -1) {
-//                int maHD = (int) tblLSHoaDon.getValueAt(row, 0);
-//            }
-//        });
+
         tblLSHoaDon.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = tblLSHoaDon.getSelectedRow();

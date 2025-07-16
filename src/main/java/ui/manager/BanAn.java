@@ -47,6 +47,8 @@ private BanAn banAn;
         addButtonEvents();
         capNhatToanBoBanAn();
         setTitle("Bàn Ăn");
+           setResizable(false);          // <-- không cho kéo giãn
+        setLocationRelativeTo(null);
     }
 
   private void moFormDatMon(int soBan) {
