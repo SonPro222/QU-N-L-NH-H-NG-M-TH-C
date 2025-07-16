@@ -193,6 +193,20 @@ public int xoaHoaDonRac() {
         return 0;
     }
 }
+@Override
+public void deleteById(int maHD) {
+    String sql = "DELETE FROM HOADON WHERE MaHD = ?";
+    try (
+        Connection conn = XJdbc.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+        ps.setInt(1, maHD);
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        throw new RuntimeException("Lỗi khi xóa hóa đơn: " + e.getMessage(), e);
+    }
+}
+
 
 
     

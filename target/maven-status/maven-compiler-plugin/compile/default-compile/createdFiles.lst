@@ -33,6 +33,7 @@ util\ExcelExporter.class
 ui\manager\DatMon$2.class
 util\XQuery.class
 entity\User.class
+ui\manager\DatMon$15.class
 ui\manager\QuanLyNhanVien$14.class
 util\TableIcon$2.class
 ui\manager\QuanLyMonAn$3.class

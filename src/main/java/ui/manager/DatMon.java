@@ -74,13 +74,7 @@ public class DatMon extends javax.swing.JDialog {
         fillToTable();
         fillChiTietMonAnTheoMonAn(0);
         hoaDonDAO = new HoaDonDAOImpl();
-//       hoaDonHienTai = hoaDonDAO.findChuaThanhToanTheoBan(soBan);
-//if (hoaDonHienTai != null) {
-//    hienThiHoaDon(hoaDonHienTai);
-//    loadChiTietMonAn(hoaDonHienTai.getMaHD());
-//} else {
-//    taoHoaDonMoi();
-//}
+
 hoaDonHienTai = hoaDonDAO.findChuaThanhToanTheoBan(soBan);
 System.out.println("🔍 HĐ bàn " + soBan + ": " + (hoaDonHienTai == null ? "KHÔNG TỒN TẠI" : "TỒN TẠI - MaHD: " + hoaDonHienTai.getMaHD()));
 
@@ -90,6 +84,12 @@ if (hoaDonHienTai != null) {
 } else {
     taoHoaDonMoi();
 }
+addWindowListener(new java.awt.event.WindowAdapter() {
+    @Override
+    public void windowClosing(java.awt.event.WindowEvent e) {
+        xoaHoaDonNeuKhongCoMon(); // ✅ gọi hàm xử lý trước khi đóng
+    }
+});
 
 
 
@@ -352,7 +352,7 @@ private void taoHoaDonMoi() {
     hd.setMaBan(soBan);
     hd.setMaNV(Auth.nhanVienDangNhap.getMaNV()); // lấy đúng người đang login
     hd.setNgayLap(new Date());
-    hd.setTrangThai("Chưa thanh toán"); // ✅ BẮT BUỘC
+    hd.setTrangThai("Chưa thanh toán"); //  BẮT BUỘC
     int maHD = hoaDonDAO.insertReturnId(hd);
     
     if (maHD > 0) {
@@ -386,7 +386,6 @@ private void datMon() {
         return;
     }
 
-    // Nếu chưa có hóa đơn thì tạo mới
     if (hoaDonHienTai == null || hoaDonHienTai.getMaHD() == 0) {
         HoaDon hd = new HoaDon();
         hd.setMaBan(soBan);
@@ -447,16 +446,12 @@ private void datMon() {
         }
     }
 
-    // Load lại bảng hóa đơn
     loadChiTietMonAn(hoaDonHienTai.getMaHD());
 
-    // Cập nhật trạng thái bàn
     parent.capNhatTrangThaiBan(soBan);
 
-    // Xóa bảng ghi nhớ tạm
     modelDaChon.setRowCount(0);
 
-    // Tính lại tổng tiền
     capNhatTongTienHoaDon();
 
     JOptionPane.showMessageDialog(this, "Đặt món thành công!");
@@ -482,27 +477,27 @@ private void thanhToan() {
     HoaDon hoaDon = hoaDonDAO.findChuaThanhToanTheoBan(maBan);
 HoaDon hd = hoaDonDAO.findChuaThanhToanTheoBan(maBan);
 if (hd == null) {
-    System.out.println("❌ Không tìm thấy hóa đơn CHƯA THANH TOÁN cho bàn: " + maBan);
+    System.out.println(" Không tìm thấy hóa đơn CHƯA THANH TOÁN cho bàn: " + maBan);
     return;
 }
 
-System.out.println("🔍 Hóa đơn cần thanh toán:");
-System.out.println("➡ Mã bàn: " + hd.getMaBan());
-System.out.println("➡ Mã HD: " + hd.getMaHD());
-System.out.println("➡ Trạng thái: " + hd.getTrangThai());
-System.out.println("➡ Tổng tiền: " + hd.getTongTien());
+System.out.println(" Hóa đơn cần thanh toán:");
+System.out.println(" Mã bàn: " + hd.getMaBan());
+System.out.println(" Mã HD: " + hd.getMaHD());
+System.out.println(" Trạng thái: " + hd.getTrangThai());
+System.out.println(" Tổng tiền: " + hd.getTongTien());
 
     if (hoaDon == null) {
-        System.out.println("❌ Không tìm thấy hóa đơn cho bàn: " + maBan);
+        System.out.println(" Không tìm thấy hóa đơn cho bàn: " + maBan);
         JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn cần thanh toán cho bàn " + maBan);
         return;
     }
 
-    System.out.println("✅ Tìm thấy hóa đơn MaHD: " + hoaDon.getMaHD());
+    System.out.println(" Tìm thấy hóa đơn MaHD: " + hoaDon.getMaHD());
 
     List<HoaDonChiTiet> chiTietList = hoaDonDAO.findByHoaDonId(hoaDon.getMaHD());
     if (chiTietList.isEmpty()) {
-        System.out.println("⚠️ Hóa đơn không có món ăn nào.");
+        System.out.println("️ Hóa đơn không có món ăn nào.");
         JOptionPane.showMessageDialog(this, "Không có món nào để thanh toán.");
         return;
     }
@@ -544,7 +539,19 @@ private void lamMoiBangMonAn() {
 private void resetTongTien() {
     lblTongTien.setText("0 VNĐ");
 }
+//======= hàm xóa hóa đơn rác ======
+private void xoaHoaDonNeuKhongCoMon() {
+    if (hoaDonHienTai != null) {
+        List<HoaDonChiTiet> chiTietList = chiTietDAO.findByHoaDonId(hoaDonHienTai.getMaHD());
+        if (chiTietList.isEmpty()) {
+            System.out.println("🗑 Xóa hóa đơn rác MaHD = " + hoaDonHienTai.getMaHD());
 
+            chiTietDAO.deleteByHoaDonId(hoaDonHienTai.getMaHD()); // Phòng trường hợp có dữ liệu dư
+            hoaDonDAO.deleteById(hoaDonHienTai.getMaHD());        // Xóa hóa đơn
+            parent.capNhatToanBoBanAn(); // Cập nhật lại màu bàn
+        }
+    }
+}
 
 
 

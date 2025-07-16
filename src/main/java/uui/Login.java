@@ -17,7 +17,8 @@ import util.XAuth;
 import util.XDialog;
 
 public class Login extends javax.swing.JDialog  {
-  
+  public boolean isSuccessLogin = false;
+
     public Login(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -57,9 +58,12 @@ public class Login extends javax.swing.JDialog  {
             return;
         }
 
-        // Kiểm tra mật khẩu
         if (!user.getMatkhau().equals(password)) {
             JOptionPane.showMessageDialog(this, "Sai mật khẩu!");
+            return;
+        }
+        if (!user.getTendangnhap().equals(username)) {
+            JOptionPane.showMessageDialog(this, "Sai tài khoản!");
             return;
         }
 
@@ -73,10 +77,10 @@ public class Login extends javax.swing.JDialog  {
         // Lưu thông tin nhân viên vào Auth
         Auth.nhanVienDangNhap = nhanVien;
          XAuth.user = user;
-          System.out.println("Tên đăng nhập: " + username);
-        System.out.println("Tên nhân viên: " + nhanVien.getTenNV()); 
-        // Đóng form login
-        this.dispose();
+        
+      isSuccessLogin = true;
+this.dispose(); // sau khi set biến mới dispose
+
     }
  public void exit() {
         if (XDialog.confirm("Bạn muốn kết thúc?")) {

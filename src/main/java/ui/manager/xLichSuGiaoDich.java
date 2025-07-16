@@ -3,8 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package ui.manager;
+
+import dao.HoaDonChiTietDAO;
 import entity.LichSuGiaoDich;
+import entity.HoaDonChiTiet;
 import dao.LichSuGiaoDichDAO;
+import dao.impl.HoaDonChiTietDAOImpl;
 import dao.impl.LichSuGiaoDichDAOImpl; // Thêm import này nếu chưa có
 import util.XJdbc;
 import javax.swing.table.DefaultTableModel;
@@ -25,7 +29,6 @@ import java.util.Date;
  */
 public class xLichSuGiaoDich extends javax.swing.JDialog {
 
-   
     public xLichSuGiaoDich(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -35,49 +38,31 @@ public class xLichSuGiaoDich extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         fillTableHoaDon(); // <-- Gọi hàm fill bảng hóa đơn khi mở form
 
-        tblBillDetails.getSelectionModel().addListSelectionListener(e -> {
-            int row = tblBillDetails.getSelectedRow();
-            if (row != -1) {
-                int maHD = (int) tblBillDetails.getValueAt(row, 0);
+//        tblLSHoaDon.getSelectionModel().addListSelectionListener(e -> {
+//            int row = tblLSHoaDon.getSelectedRow();
+//            if (row != -1) {
+//                int maHD = (int) tblLSHoaDon.getValueAt(row, 0);
+//            }
+//        });
+        tblLSHoaDon.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = tblLSHoaDon.getSelectedRow();
+                if (selectedRow != -1) {
+                    int maHD = (int) tblLSHoaDon.getValueAt(selectedRow, 0); // Lấy MaHD từ cột 0
+                    fillChiTietHoaDon(maHD); // Gọi hàm để fill bảng chi tiết
+                }
             }
         });
+
     }
 
- private LichSuGiaoDichDAO lichSuGiaoDichDAO = new LichSuGiaoDichDAOImpl();
-public void fillTableHoaDon() {
-    DefaultTableModel model = (DefaultTableModel) tblBillDetails.getModel();
-    model.setRowCount(0); // Clear existing data
+    private LichSuGiaoDichDAO lichSuGiaoDichDAO = new LichSuGiaoDichDAOImpl();
 
-    List<LichSuGiaoDich> list = lichSuGiaoDichDAO.findAll();
-    for (LichSuGiaoDich ls : list) {
-        Object[] row = {
-            ls.getMaHD(),
-            ls.getNgayLap(),
-            ls.getTrangThai(),
-            ls.getTenNhanVien(),
-            ls.getTenBan(),
-            ls.getTongTien()
-        };
-        model.addRow(row);
-    }
-}
+    public void fillTableHoaDon() {
+        DefaultTableModel model = (DefaultTableModel) tblLSHoaDon.getModel();
+        model.setRowCount(0); // Clear existing data
 
-
-
-    // Fill chi tiết hóa đơn
-   
-
-    // Nếu muốn lọc theo ngày, thêm hàm như sau:
-public void filterHoaDonByDate(String tuNgay, String denNgay) {
-    DefaultTableModel model = (DefaultTableModel) tblBillDetails.getModel();
-    model.setRowCount(0); // Clear existing data
-
-    try {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date fromDate = sdf.parse(tuNgay);
-        Date toDate = sdf.parse(denNgay);
-
-        List<LichSuGiaoDich> list = lichSuGiaoDichDAO.findByDateRange(fromDate, toDate);
+        List<LichSuGiaoDich> list = lichSuGiaoDichDAO.findAll();
         for (LichSuGiaoDich ls : list) {
             Object[] row = {
                 ls.getMaHD(),
@@ -89,26 +74,62 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
             };
             model.addRow(row);
         }
-    } catch (ParseException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi định dạng ngày: " + e.getMessage());
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi khi lọc lịch sử giao dịch: " + e.getMessage());
+    }
+    private HoaDonChiTietDAO chiTietDAO = new HoaDonChiTietDAOImpl();
+
+private void fillChiTietHoaDon(int maHD) {
+    DefaultTableModel model = (DefaultTableModel) tblChiTietHoaDon.getModel();
+    model.setRowCount(0); // Xóa dữ liệu cũ
+
+    List<HoaDonChiTiet> list = chiTietDAO.findByHoaDonId(maHD);
+    for (HoaDonChiTiet ct : list) {
+        Object[] row = {
+            ct.getMaChiTiet(),
+            ct.getTenMon(),
+            ct.getSoLuong(),
+            ct.getDonGia(),
+            ct.getSoLuong() * ct.getDonGia()
+        };
+        model.addRow(row);
     }
 }
 
+
+    public void filterHoaDonByDate(String tuNgay, String denNgay) {
+        DefaultTableModel model = (DefaultTableModel) tblLSHoaDon.getModel();
+        model.setRowCount(0); // Clear existing data
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date fromDate = sdf.parse(tuNgay);
+            Date toDate = sdf.parse(denNgay);
+
+            List<LichSuGiaoDich> list = lichSuGiaoDichDAO.findByDateRange(fromDate, toDate);
+            for (LichSuGiaoDich ls : list) {
+                Object[] row = {
+                    ls.getMaHD(),
+                    ls.getNgayLap(),
+                    ls.getTrangThai(),
+                    ls.getTenNhanVien(),
+                    ls.getTenBan(),
+                    ls.getTongTien()
+                };
+                model.addRow(row);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi định dạng ngày: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi lọc lịch sử giao dịch: " + e.getMessage());
+        }
+    }
 
     private Object getTenNhanVien() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getTenNhanVien'");
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -121,7 +142,11 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
         jButton1 = new javax.swing.JButton();
         cbNamThangQuy = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblBillDetails = new javax.swing.JTable();
+        tblLSHoaDon = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblChiTietHoaDon = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -140,7 +165,7 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
             }
         });
 
-        tblBillDetails.setModel(new javax.swing.table.DefaultTableModel(
+        tblLSHoaDon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -159,7 +184,26 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tblBillDetails);
+        jScrollPane1.setViewportView(tblLSHoaDon);
+
+        tblChiTietHoaDon.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "MaHD", "MaCT", "Tên Món", "Số Lượng", "Đơn Gía"
+            }
+        ));
+        jScrollPane2.setViewportView(tblChiTietHoaDon);
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Lịch Sử Chi Tiêt Hóa Đơn");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setText("Lịch Sử Hóa Đơn");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -179,15 +223,21 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
                 .addGap(62, 62, 62)
                 .addComponent(cbNamThangQuy, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(144, 144, 144))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(734, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -196,11 +246,17 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
                     .addComponent(jButton1)
                     .addComponent(cbNamThangQuy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(223, Short.MAX_VALUE))
+                .addComponent(jLabel4)
+                .addGap(5, 5, 5)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 940, 460));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 940, 500));
 
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/hinhnen.png"))); // NOI18N
         getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1032, 560));
@@ -223,33 +279,33 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
 
         switch (selected) {
             case "Hôm nay":
-            tuNgay = denNgay = today.format(formatter);
-            break;
+                tuNgay = denNgay = today.format(formatter);
+                break;
             case "Tuần này":
-            LocalDate monday = today.with(DayOfWeek.MONDAY);
-            LocalDate sunday = today.with(DayOfWeek.SUNDAY);
-            tuNgay = monday.format(formatter);
-            denNgay = sunday.format(formatter);
-            break;
+                LocalDate monday = today.with(DayOfWeek.MONDAY);
+                LocalDate sunday = today.with(DayOfWeek.SUNDAY);
+                tuNgay = monday.format(formatter);
+                denNgay = sunday.format(formatter);
+                break;
             case "Tháng này":
-            LocalDate firstDayOfMonth = today.withDayOfMonth(1);
-            LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-            tuNgay = firstDayOfMonth.format(formatter);
-            denNgay = lastDayOfMonth.format(formatter);
-            break;
+                LocalDate firstDayOfMonth = today.withDayOfMonth(1);
+                LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+                tuNgay = firstDayOfMonth.format(formatter);
+                denNgay = lastDayOfMonth.format(formatter);
+                break;
             case "Qúy này":
-            int currentQuarter = (today.getMonthValue() - 1) / 3 + 1;
-            int startMonth = (currentQuarter - 1) * 3 + 1;
-            int endMonth = startMonth + 2;
-            LocalDate firstDayOfQuarter = LocalDate.of(today.getYear(), startMonth, 1);
-            LocalDate lastDayOfQuarter = LocalDate.of(today.getYear(), endMonth, YearMonth.of(today.getYear(), endMonth).lengthOfMonth());
-            tuNgay = firstDayOfQuarter.format(formatter);
-            denNgay = lastDayOfQuarter.format(formatter);
-            break;
+                int currentQuarter = (today.getMonthValue() - 1) / 3 + 1;
+                int startMonth = (currentQuarter - 1) * 3 + 1;
+                int endMonth = startMonth + 2;
+                LocalDate firstDayOfQuarter = LocalDate.of(today.getYear(), startMonth, 1);
+                LocalDate lastDayOfQuarter = LocalDate.of(today.getYear(), endMonth, YearMonth.of(today.getYear(), endMonth).lengthOfMonth());
+                tuNgay = firstDayOfQuarter.format(formatter);
+                denNgay = lastDayOfQuarter.format(formatter);
+                break;
             case "Năm nay":
-            tuNgay = LocalDate.of(today.getYear(), 1, 1).format(formatter);
-            denNgay = LocalDate.of(today.getYear(), 12, 31).format(formatter);
-            break;
+                tuNgay = LocalDate.of(today.getYear(), 1, 1).format(formatter);
+                denNgay = LocalDate.of(today.getYear(), 12, 31).format(formatter);
+                break;
         }
 
         // Gọi hàm lọc
@@ -260,7 +316,6 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
         jTextField2.setText(denNgay);
     }//GEN-LAST:event_cbNamThangQuyActionPerformed
 
-  
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbNamThangQuy;
@@ -268,10 +323,14 @@ public void filterHoaDonByDate(String tuNgay, String denNgay) {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTable tblBillDetails;
+    private javax.swing.JTable tblChiTietHoaDon;
+    private javax.swing.JTable tblLSHoaDon;
     // End of variables declaration//GEN-END:variables
 }

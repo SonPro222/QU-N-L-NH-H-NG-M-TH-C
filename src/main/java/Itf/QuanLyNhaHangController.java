@@ -16,7 +16,7 @@ import ui.manager.QuanLyNhanVien;
 import ui.manager.ThongKeDoanhThu;
 import util.XDialog;
 import uui.Login;
-ádoashduh
+
 
 public interface QuanLyNhaHangController {
       void init();
@@ -34,7 +34,6 @@ public interface QuanLyNhaHangController {
     default void showQuanLyNhanVien(JFrame frame){
         this.showJDialog(new QuanLyNhanVien( frame, true));
     }
-
     default void showQuanLyMonAn(JFrame frame){
         this.showJDialog(new QuanLyMonAn(frame, true));
     }
@@ -43,8 +42,6 @@ public interface QuanLyNhaHangController {
     }
     default void showBanAn(JFrame frame){
         this.showJDialog(new BanAn(frame, true));
-
-       
     }
     default void showThongKeDoanhThu(JFrame frame){
         this.showJDialog(new ThongKeDoanhThu(frame, true));
@@ -56,23 +53,4 @@ public interface QuanLyNhaHangController {
     default void showLichSuGiaoDich(JFrame frame){
         this.showJDialog(new xLichSuGiaoDich(frame, true));
     }
-//    
-//    default void showCategoryManagerJDialog(JFrame frame){
-//        this.showJDialog(new CategoryManager(frame, true));
-//    }
-//    default void showCardManagerJDialog(JFrame frame){
-//        this.showJDialog(new CardManager(frame, true));
-//    }
-//    default void showBillManagerJDialog(JFrame frame){
-//        this.showJDialog(new BillManager(frame, true));
-//    }
-//    default void showUserManagerJDialog(JFrame frame){
-//        this.showJDialog(new UserManager(frame, true));
-//    }
-//    default void showRevenueManagerJDialog(JFrame frame){
-//        this.showJDialog(new RevenueManager(frame, true));
-//    }
-//   default void showQuanLyShopDialog(JFrame frame){
-//    this.showJDialog(new QuanLyshop(frame, true));
-//}
 }

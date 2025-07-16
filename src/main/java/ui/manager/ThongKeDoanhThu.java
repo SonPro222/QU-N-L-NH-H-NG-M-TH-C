@@ -29,6 +29,7 @@ public class ThongKeDoanhThu extends JDialog {
         initComponents();
         fillComboBox();
         loadTableData(null, null);
+        
     }
 
     private void initComponents() {
@@ -98,10 +99,8 @@ public class ThongKeDoanhThu extends JDialog {
 
     private void loadTableData(Integer thang, Integer nam) {
         List<DoanhThu> list = doanhThuDAO.findByMonthYear(thang, nam);
-
         DefaultTableModel model = (DefaultTableModel) tblDoanhThu.getModel();
         model.setRowCount(0);
-
         double tongThu = 0, tongChi = 0;
         for (DoanhThu dt : list) {
             tongThu += dt.getTongThu();

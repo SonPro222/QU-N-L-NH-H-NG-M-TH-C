@@ -8,10 +8,6 @@ import entity.HoaDon;
 import entity.HoaDonChiTiet;
 import java.util.List;
 
-/**
- *
- * @author dangt
- */
 public interface HoaDonDAO {
     int insertReturnId(HoaDon hd);
     HoaDon findChuaThanhToanTheoBan(int maBan);
@@ -22,5 +18,6 @@ public interface HoaDonDAO {
      void insert(HoaDon hd);
     void update(HoaDon hd);
      int xoaHoaDonRac();  
+     void deleteById(int maHD);
 
 }
