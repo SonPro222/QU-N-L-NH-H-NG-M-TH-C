@@ -183,7 +183,15 @@ private NhanVienDAO nhanVienDAO = new NhanVienDAOImpl();
             new String [] {
                 "Mã NV", "Tên NV", "Số DT", "Chức Vụ", "Lương", "Tên Đăng Nhập"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(tblNhanVien);
 
         jLabel1.setText("Họ Và Tên");

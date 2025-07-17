@@ -141,7 +141,7 @@
                           <Table columnCount="3" rowCount="4">
                             <Column editable="false" title="H&#xec;nh &#x1ea2;nh" type="java.lang.Object"/>
                             <Column editable="false" title="T&#xea;n M&#xf3;n &#x102;n" type="java.lang.Object"/>
-                            <Column editable="false" title="&#x110;&#x1a1;n Gi&#xe1; VND" type="java.lang.Object"/>
+                            <Column editable="false" title="&#x110;&#x1a1;n Gi&#xe1; VND" type="java.lang.Double"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

@@ -2,6 +2,7 @@ ui\manager\QuanLyNhaHang$8.class
 ui\manager\DatMon$14.class
 entity\MonAn$MonAnBuilder.class
 ui\manager\DatMon$3.class
+ui\manager\QuanLyChiTieu$4.class
 uui\Login$1.class
 ui\manager\QuanLyMonAn$27.class
 entity\ChiTietMonAn.class
@@ -9,6 +10,7 @@ entity\NhanVien.class
 ui\manager\QuanLyMonAn$2.class
 ui\manager\QuanLyMonAn$7.class
 ui\manager\QuanLyNhaHang$2.class
+ui\manager\xLichSuGiaoDich$5.class
 entity\MonAn.class
 ui\manager\QuanLyMonAn$21.class
 dao\impl\HoaDonChiTietDAOImpl.class
@@ -42,6 +44,7 @@ ui\manager\QuanLyNhaHang$3.class
 ui\manager\QuanLyNhanVien$3.class
 ui\manager\QuanLyMonAn$20.class
 dao\impl\ChiTieuDaoImpl.class
+ui\manager\QuanLyNhanVien$4.class
 util\XIcon.class
 entity\HoaDon.class
 ui\manager\QuanLyTaiKhoan$6.class
@@ -67,7 +70,6 @@ ui\manager\QuanLyMonAn$14.class
 ui\manager\QuanLyNhaHang$6.class
 dao\impl\LichSuGiaoDichDAOImpl.class
 ui\manager\QuanLyMonAn$6.class
-ui\manager\QuanLyNhanVien$3$1.class
 entity\HoaDonChiTiet.class
 ui\manager\QuanLyChamCongNhanVien$3.class
 ui\manager\QuanLyMonAn$17.class
@@ -88,7 +90,6 @@ util\XAuth.class
 ui\manager\QuanLyTaiKhoan$7.class
 ui\manager\QuanLyChiTieu$2.class
 ui\manager\DatMon$1.class
-util\JdbcHelper.class
 ui\manager\QuanLyMonAn$4.class
 entity\DoanhThu.class
 util\TableIcon$1.class
@@ -107,6 +108,7 @@ util\TimeRange.class
 ui\manager\QuanLyTaiKhoan$3.class
 ui\manager\QuanLyChiTieu.class
 ui\manager\BanAn$4.class
+ui\manager\xLichSuGiaoDich$4.class
 ui\manager\QuanLyNhaHang$1.class
 ui\manager\QuanLyMonAn$10.class
 util\XDialog.class
@@ -125,6 +127,7 @@ ui\manager\ThongKeDoanhThu.class
 ui\manager\DatMon$10.class
 ui\manager\xLichSuGiaoDich$1.class
 ui\manager\BanAn$1.class
+ui\manager\QuanLyNhanVien$4$1.class
 ui\manager\QuanLyChamCongNhanVien$1.class
 ui\manager\DatMon$4.class
 ui\manager\QuanLyMonAn$1.class
@@ -146,5 +149,6 @@ util\XDate.class
 uui\Login.class
 ui\manager\BanAn$3.class
 ui\manager\DatMon.class
+ui\manager\xLichSuGiaoDich$3.class
 dao\DoanhThuDAO.class
 ui\manager\QuanLyTaiKhoan$2.class

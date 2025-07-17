@@ -5,6 +5,7 @@
 package ui.manager;
 
 import dao.ChiTietMonAnDAO;
+import dao.MonAnDAO;
 import dao.impl.ChiTietMonAnDAOImpl;
 import dao.impl.MonAnDAOImpl;
 import entity.ChiTietMonAn;
@@ -274,9 +275,16 @@ private void fillChiTietMonAnTheoMonAn(int maMonAn) {
                 "Hình Ảnh", "Tên Món Ăn", "Đơn Giá VND"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Double.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -533,47 +541,42 @@ private void fillChiTietMonAnTheoMonAn(int maMonAn) {
 
     private void btnXoaMonAnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaMonAnActionPerformed
         // TODO add your handling code here:
-        btnXoaMonAn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = tblBangChiTietMon.getSelectedRow();
-                if (selectedRow == -1) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn để xóa.");
-                    return;
-                }
+   btnXoaMonAn.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int selectedRow = tblBangChiTietMon.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn để xóa.");
+            return;
+        }
 
-                int confirm = JOptionPane.showConfirmDialog(
-                        null,
-                        "Bạn có chắc muốn xóa món ăn này?",
-                        "Xác nhận xóa",
-                        JOptionPane.YES_NO_OPTION
-                );
-                if (confirm != JOptionPane.YES_OPTION) {
-                    return;
-                }
+        int confirm = JOptionPane.showConfirmDialog(
+                null,
+                "Bạn có chắc muốn xóa món ăn này?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
 
-                try {
-                    // Lấy Tên món từ bảng (cột 1 là Tên Món Ăn)
-                    String tenMon = tblBangChiTietMon.getValueAt(selectedRow, 1).toString();
+        try {
+            // Lấy mã món ăn từ cột 0 trong bảng
+            int maMonAn = Integer.parseInt(tblBangChiTietMon.getValueAt(selectedRow, 0).toString());
 
-                    // Xóa món ăn khỏi CSDL
-                    String sql = "DELETE FROM ChiTietMonAn WHERE TenMon = ?";
-                    int rows = XJdbc.update(sql, tenMon);
+            // Gọi DAO để xóa
+            MonAnDAO monAnDAO = new MonAnDAOImpl();
+            monAnDAO.deleteById(maMonAn);
 
-                    if (rows > 0) {
-                        JOptionPane.showMessageDialog(null, "✅ Xóa món ăn thành công!");
-                        loadBangMonAn(); // Load lại bảng sau khi xóa
-                    } else {
-                        JOptionPane.showMessageDialog(null, "❌ Không thể xóa món ăn. Có thể không tồn tại trong CSDL.");
-                    }
+            JOptionPane.showMessageDialog(null, "✅ Xóa món ăn thành công!");
+            loadBangMonAn(); // Reload lại bảng
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "❌ Lỗi khi xóa món ăn: " + ex.getMessage());
+        }
+    }
+});
 
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "❌ Lỗi khi xóa món ăn: " + ex.getMessage());
-                }
-                fillChiTietMonAnTheoMonAn(ABORT);
-            }
-        });
 
     }//GEN-LAST:event_btnXoaMonAnActionPerformed
 
@@ -691,6 +694,8 @@ private void fillChiTietMonAnTheoMonAn(int maMonAn) {
         JOptionPane.showMessageDialog(this, "❌ Lỗi khi tải dữ liệu món ăn: " + e.getMessage());
     }
 }
+   
+
 
 
 
@@ -730,84 +735,70 @@ private void fillChiTietMonAnTheoMonAn(int maMonAn) {
 
     private void btnThemMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemMoiActionPerformed
         // TODO add your handling code here:
-        btnThemMoi.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    // Lấy dữ liệu từ form
-                    String tenMon = txtTen.getText().trim();
-                    String giaStr = txtPrice.getText().trim();
+   btnThemMoi.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try {
+            // Lấy dữ liệu từ form
+            String tenMon = txtTen.getText().trim();
+            String giaStr = txtPrice.getText().trim();
+            String tenLoaiMon = cboLoai.getSelectedItem().toString(); // Tên loại món (ví dụ: "Món Gà")
 
-                    // Giả sử combobox chứa tên loại món tương ứng MaMonAn (1, 2, 3,...)
-                    int maMonAn = cboLoai.getSelectedIndex() + 1;
-
-                    // Kiểm tra dữ liệu đầu vào
-                    if (tenMon.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Vui lòng nhập tên món.", "Thiếu thông tin", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    if (giaStr.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Vui lòng nhập giá món.", "Thiếu thông tin", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    if (tenAnh == null || duongDanAnh == null) {
-                        JOptionPane.showMessageDialog(null, "Vui lòng chọn hình ảnh cho món ăn.", "Thiếu hình ảnh", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    double gia;
-                    try {
-                        gia = Double.parseDouble(giaStr);
-                        if (gia <= 0) {
-                            JOptionPane.showMessageDialog(null, "Giá món ăn phải lớn hơn 0.", "Giá không hợp lệ", JOptionPane.WARNING_MESSAGE);
-                            return;
-                        }
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null, "Giá món ăn phải là số hợp lệ.", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    // Tạo thư mục nếu chưa có
-                    File folder = new File("images");
-                    if (!folder.exists()) {
-                        folder.mkdirs();
-                    }
-
-                    // Sao chép ảnh vào thư mục images
-                    try {
-                        File source = new File(duongDanAnh);
-                        File dest = new File("images/" + tenAnh);
-                        Files.copy(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(null, "Không thể sao chép hình ảnh: " + ex.getMessage(), "Lỗi sao chép ảnh", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    // Thêm vào CSDL
-                    String sql = "INSERT INTO ChiTietMonAn (TenMon, Gia, MaMonAn, HinhAnh) VALUES (?, ?, ?, ?)";
-                    int row = XJdbc.update(sql, tenMon, gia, maMonAn, tenAnh);
-
-                    if (row > 0) {
-                        JOptionPane.showMessageDialog(null, "✔️ Thêm món ăn thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                        // Reset form
-                        txtTen.setText("");
-                        txtPrice.setText("");
-                        lblHinh.setIcon(null);
-                        tenAnh = null;
-                        duongDanAnh = null;
-                    } else {
-                        JOptionPane.showMessageDialog(null, "❌ Thêm món ăn thất bại!", "Thất bại", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "⚠️ Đã xảy ra lỗi: " + ex.getMessage(), "Lỗi hệ thống", JOptionPane.ERROR_MESSAGE);
-                }
-                fillChiTietMonAnTheoMonAn(ABORT);
+            // Validate input
+            if (tenMon.isEmpty() || giaStr.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Không được để trống tên món hoặc giá.");
+                return;
             }
-        });
+
+            if (tenAnh == null || duongDanAnh == null) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn ảnh món ăn.");
+                return;
+            }
+
+            double gia;
+            try {
+                gia = Double.parseDouble(giaStr);
+                if (gia <= 0) {
+                    JOptionPane.showMessageDialog(null, "Giá phải > 0.");
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Giá không hợp lệ.");
+                return;
+            }
+
+            File folder = new File("images");
+            if (!folder.exists()) folder.mkdirs();
+
+            File source = new File(duongDanAnh);
+            File dest = new File("images/" + tenAnh);
+            Files.copy(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            // Chuẩn bị đối tượng ChiTietMonAn
+            ChiTietMonAn chiTiet = new ChiTietMonAn();
+            chiTiet.setTenMon(tenMon);
+            chiTiet.setGia(gia);
+            chiTiet.setHinhAnh(tenAnh);
+            // Gọi DAO để tạo Món Ăn + Chi Tiết Món Ăn (bao gồm mã tự tăng)
+            ChiTietMonAnDAO dao = new ChiTietMonAnDAOImpl();
+            dao.createWithMonAn(tenLoaiMon, chiTiet);
+            JOptionPane.showMessageDialog(null, "✔️ Thêm món ăn thành công!");
+            // Reset form
+            txtTen.setText("");
+            txtPrice.setText("");
+            lblHinh.setIcon(null);
+            tenAnh = null;
+            duongDanAnh = null;
+
+            // Reload bảng
+            fillChiTietMonAnTheoMonAn(ABORT);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
+        }
+    }
+});
+
 
     }//GEN-LAST:event_btnThemMoiActionPerformed
 
@@ -975,6 +966,7 @@ private void fillChiTietMonAnTheoMonAn(int maMonAn) {
                     JOptionPane.showMessageDialog(null, "❌ Lỗi khi xóa loại món ăn: " + ex.getMessage());
                 }
                 fillToTable();
+                fillChiTietMonAnTheoMonAn(ABORT);
             }
         });
 
@@ -1056,21 +1048,7 @@ private void fillComboBoxLoaiMon() {
         }
     }
 
-//    public static void main(String args[]) {
-//
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                QuanLyMonAn dialog = new QuanLyMonAn(new javax.swing.JFrame(), true);
-//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//                    @Override
-//                    public void windowClosing(java.awt.event.WindowEvent e) {
-//                        System.exit(0);
-//                    }
-//                });
-//                dialog.setVisible(true);
-//            }
-//        });
-//    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChange;

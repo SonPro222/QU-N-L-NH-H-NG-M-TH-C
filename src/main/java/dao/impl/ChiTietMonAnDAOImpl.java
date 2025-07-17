@@ -1,7 +1,9 @@
 package dao.impl;
 
 import dao.ChiTietMonAnDAO;
+import dao.MonAnDAO;
 import entity.ChiTietMonAn;
+import entity.MonAn;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,4 +149,19 @@ public ChiTietMonAn findByTenMon(String tenMon) {
     public List<ChiTietMonAn> findAllWithMonAn() {
         return findAll();
     }
+     public ChiTietMonAn createWithMonAn(String tenLoaiMon, ChiTietMonAn chiTiet) {
+    // 1. Thêm MonAn mới trước
+    MonAn monAn = new MonAn();
+    monAn.setTenMonAn(tenLoaiMon);
+    monAn.setHinhAnh(chiTiet.getHinhAnh());
+    MonAnDAO monAnDAO = new MonAnDAOImpl();
+    monAn = monAnDAO.create(monAn);
+
+   if (monAn.getMaMonAn() <= 0) {
+    throw new RuntimeException("Không thể thêm món ăn vào bảng MonAn");
+}
+    // 2. Thêm ChiTietMonAn với MaMonAn vừa lấy được
+    chiTiet.setMaMonAn(monAn.getMaMonAn());
+    return this.create(chiTiet);
+}
 }

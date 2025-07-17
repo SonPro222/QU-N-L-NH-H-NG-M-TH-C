@@ -30,7 +30,7 @@ public class ThongKeDoanhThu extends JDialog {
         initComponents();
         fillComboBox();
         loadTableData(null, null);
-        
+
     }
 
     private void initComponents() {
@@ -56,21 +56,26 @@ public class ThongKeDoanhThu extends JDialog {
         // Table
         tblDoanhThu = new JTable();
         tblDoanhThu.setModel(new DefaultTableModel(
-                new Object[]{"Ngày", "Tổng Thu", "Tổng Chi", "Lợi Nhuận", "Ghi chú"}, 0
+                new Object[]{"Ngày", "Tổng Thu", "Tổng Chi", "Lợi Nhuận"}, 0
         ));
         add(new JScrollPane(tblDoanhThu), BorderLayout.CENTER);
 
-        
         // South
         JPanel pnlBottom = new JPanel(new GridLayout(1, 3));
         lblTongThu = new JLabel("Tổng thu: 0", SwingConstants.CENTER);
         lblTongChi = new JLabel("Tổng chi: 0", SwingConstants.CENTER);
         lblLoiNhuan = new JLabel("Lợi nhuận: 0", SwingConstants.CENTER);
-
+        pnlBottom.setPreferredSize(new Dimension(0, 60));
         pnlBottom.add(lblTongThu);
         pnlBottom.add(lblTongChi);
         pnlBottom.add(lblLoiNhuan);
         add(pnlBottom, BorderLayout.SOUTH);
+        
+        Font fontLon = new Font("Arial", Font.BOLD, 14); // Hoặc Font.PLAIN, Font.ITALIC
+
+        lblTongThu.setFont(fontLon);
+        lblTongChi.setFont(fontLon);
+        lblLoiNhuan.setFont(fontLon);
 
         // Events
         btnLoc.addActionListener(e -> locDoanhThu());
@@ -98,31 +103,29 @@ public class ThongKeDoanhThu extends JDialog {
         }
     }
 
-   private void loadTableData(Integer thang, Integer nam) {
-    List<DoanhThu> list = doanhThuDAO.findByMonthYear(thang, nam);
-    DefaultTableModel model = (DefaultTableModel) tblDoanhThu.getModel();
-    model.setRowCount(0);
+    private void loadTableData(Integer thang, Integer nam) {
+        List<DoanhThu> list = doanhThuDAO.findByMonthYear(thang, nam);
+        DefaultTableModel model = (DefaultTableModel) tblDoanhThu.getModel();
+        model.setRowCount(0);
 
-    double tongThu = 0, tongChi = 0;
-    DecimalFormat df = new DecimalFormat("#,###");
+        double tongThu = 0, tongChi = 0;
+        DecimalFormat df = new DecimalFormat("#,###");
 
-    for (DoanhThu dt : list) {
-        tongThu += dt.getTongThu();
-        tongChi += dt.getTongChi();
-        model.addRow(new Object[]{
-            dt.getNgay(),
-            df.format(dt.getTongThu()) + " VND",
-            df.format(dt.getTongChi()) + " VND",
-            df.format(dt.getTongThu() - dt.getTongChi()) + " VND",
-            dt.getGhiChu()
-        });
+        for (DoanhThu dt : list) {
+            tongThu += dt.getTongThu();
+            tongChi += dt.getTongChi();
+            model.addRow(new Object[]{
+                dt.getNgay(),
+                df.format(dt.getTongThu()) + " VND",
+                df.format(dt.getTongChi()) + " VND",
+                df.format(dt.getTongThu() - dt.getTongChi()) + " VND"
+            });
+        }
+
+        lblTongThu.setText("Tổng thu: " + df.format(tongThu) + " VND");
+        lblTongChi.setText("Tổng chi: " + df.format(tongChi) + " VND");
+        lblLoiNhuan.setText("Lợi nhuận: " + df.format(tongThu - tongChi) + " VND");
     }
-
-    lblTongThu.setText("Tổng thu: " + df.format(tongThu) + " VND");
-    lblTongChi.setText("Tổng chi: " + df.format(tongChi) + " VND");
-    lblLoiNhuan.setText("Lợi nhuận: " + df.format(tongThu - tongChi) + " VND");
-}
-
 
     private void locDoanhThu() {
         Integer thang = cboThang.getSelectedIndex() == 0 ? null : cboThang.getSelectedIndex();

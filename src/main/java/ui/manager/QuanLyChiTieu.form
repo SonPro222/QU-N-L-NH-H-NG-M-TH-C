@@ -102,7 +102,7 @@
                           <Table columnCount="4" rowCount="4">
                             <Column editable="true" title="M&#xe3; CT" type="java.lang.Object"/>
                             <Column editable="true" title="Ng&#xe0;y" type="java.lang.Object"/>
-                            <Column editable="true" title="S&#x1ed1; Ti&#x1ec1;n" type="java.lang.Object"/>
+                            <Column editable="true" title="S&#x1ed1; Ti&#x1ec1;n" type="java.lang.Double"/>
                             <Column editable="true" title="M&#xf4; T&#x1ea3;" type="java.lang.Object"/>
                           </Table>
                         </Property>

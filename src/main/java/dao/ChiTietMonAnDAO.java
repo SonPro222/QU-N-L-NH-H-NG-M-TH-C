@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface ChiTietMonAnDAO {
     List<ChiTietMonAn> findByMonAnId(int maMonAn);
-
+    
     // Tạo mới món ăn chi tiết
     ChiTietMonAn create(ChiTietMonAn entity);
    ChiTietMonAn findByTenMon(String tenMon);
@@ -23,4 +23,5 @@ public interface ChiTietMonAnDAO {
 
     // Lấy tất cả dữ liệu chi tiết món ăn kèm thông tin món ăn
     List<ChiTietMonAn> findAllWithMonAn();
+     public ChiTietMonAn createWithMonAn(String tenLoaiMon, ChiTietMonAn chiTiet);
 }

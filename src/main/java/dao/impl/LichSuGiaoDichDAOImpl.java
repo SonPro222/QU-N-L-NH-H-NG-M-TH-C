@@ -4,6 +4,7 @@ import dao.LichSuGiaoDichDAO;
 import entity.LichSuGiaoDich;
 import util.XJdbc;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
@@ -101,6 +102,18 @@ public void update(LichSuGiaoDich lichSu) {
         ps.executeUpdate();
     } catch (SQLException e) {
         e.printStackTrace();
+    }
+}
+@Override
+public List<LichSuGiaoDich> locHoaDonTheoNgay(String tuNgay, String denNgay) {
+    try {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date fromDate = sdf.parse(tuNgay);
+        Date toDate = sdf.parse(denNgay);
+        return findByDateRange(fromDate, toDate);
+    } catch (Exception e) {
+        e.printStackTrace();
+        return new ArrayList<>(); // trả về rỗng nếu lỗi
     }
 }
 

@@ -38,7 +38,6 @@ public class xLichSuGiaoDich extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         fillTableHoaDon(); // <-- Gọi hàm fill bảng hóa đơn khi mở form
 
-
         tblLSHoaDon.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = tblLSHoaDon.getSelectedRow();
@@ -72,23 +71,22 @@ public class xLichSuGiaoDich extends javax.swing.JDialog {
     }
     private HoaDonChiTietDAO chiTietDAO = new HoaDonChiTietDAOImpl();
 
-private void fillChiTietHoaDon(int maHD) {
-    DefaultTableModel model = (DefaultTableModel) tblChiTietHoaDon.getModel();
-    model.setRowCount(0); // Xóa dữ liệu cũ
+    private void fillChiTietHoaDon(int maHD) {
+        DefaultTableModel model = (DefaultTableModel) tblChiTietHoaDon.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
 
-    List<HoaDonChiTiet> list = chiTietDAO.findByHoaDonId(maHD);
-    for (HoaDonChiTiet ct : list) {
-        Object[] row = {
-            ct.getMaHD(),
-            ct.getMaChiTiet(),
-            ct.getTenMon(),
-            ct.getSoLuong(),
-            ct.getDonGia()
-        };
-        model.addRow(row);
+        List<HoaDonChiTiet> list = chiTietDAO.findByHoaDonId(maHD);
+        for (HoaDonChiTiet ct : list) {
+            Object[] row = {
+                ct.getMaHD(),
+                ct.getMaChiTiet(),
+                ct.getTenMon(),
+                ct.getSoLuong(),
+                ct.getDonGia()
+            };
+            model.addRow(row);
+        }
     }
-}
-
 
     public void filterHoaDonByDate(String tuNgay, String denNgay) {
         DefaultTableModel model = (DefaultTableModel) tblLSHoaDon.getModel();
@@ -149,9 +147,20 @@ private void fillChiTietHoaDon(int maHD) {
 
         jLabel1.setText("Từ ngày");
 
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
         jLabel2.setText("Đến Ngày");
 
         jButton1.setText("Lọc");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         cbNamThangQuy.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Năm nay", "Tuần này", "Tháng này", "Qúy này", "Hôm nay" }));
         cbNamThangQuy.addActionListener(new java.awt.event.ActionListener() {
@@ -171,9 +180,16 @@ private void fillChiTietHoaDon(int maHD) {
                 "Mã phiếu", "Ngày tạo", "Trạng thái", "Nhân viên", "Bàn", "Tổng tiền"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -189,13 +205,21 @@ private void fillChiTietHoaDon(int maHD) {
                 {null, null, null, null, null}
             },
             new String [] {
-                "MaHD", "MaCT", "Tên Món", "Số Lượng", "Đơn Gía"
+                "MaHD", "MaCT", "Tên Món", "Số Lượng", "Đơn Giá"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Double.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(tblChiTietHoaDon);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setText("Lịch Sử Chi Tiêt Hóa Đơn");
+        jLabel3.setText("Lịch Sử Chi Tiết Hóa Đơn");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Lịch Sử Hóa Đơn");
@@ -262,20 +286,40 @@ private void fillChiTietHoaDon(int maHD) {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String tuNgay = jTextField1.getText().trim(); // yyyy-MM-dd
         String denNgay = jTextField2.getText().trim(); // yyyy-MM-dd
-        filterHoaDonByDate(tuNgay, denNgay);
+
+        // Gọi DAO để lấy danh sách hóa đơn
+        List<LichSuGiaoDich> danhSachLoc = lichSuGiaoDichDAO.locHoaDonTheoNgay(tuNgay, denNgay);
+
+        // Đổ vào bảng
+        DefaultTableModel model = (DefaultTableModel) tblLSHoaDon.getModel();
+        model.setRowCount(0);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        for (LichSuGiaoDich hd : danhSachLoc) {
+            model.addRow(new Object[]{
+                hd.getMaHD(),
+                sdf.format(hd.getNgayLap()),
+                hd.getTrangThai(), // Thêm trạng thái
+                hd.getTenNhanVien(),
+                hd.getTenBan(), // Thêm tên bàn
+                hd.getTongTien()
+            });
+
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void cbNamThangQuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbNamThangQuyActionPerformed
-        // TODO add your handling code here:
         String selected = (String) cbNamThangQuy.getSelectedItem();
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String tuNgay = "", denNgay = "";
-
+        String tuNgay = today.format(formatter);
+        String denNgay = today.format(formatter);
         switch (selected) {
             case "Hôm nay":
-                tuNgay = denNgay = today.format(formatter);
+                tuNgay = today.format(formatter);
+                denNgay = today.plusDays(1).format(formatter);
                 break;
+
             case "Tuần này":
                 LocalDate monday = today.with(DayOfWeek.MONDAY);
                 LocalDate sunday = today.with(DayOfWeek.SUNDAY);
@@ -309,7 +353,12 @@ private void fillChiTietHoaDon(int maHD) {
         // Gán lại text cho 2 ô ngày (nếu có)
         jTextField1.setText(tuNgay);
         jTextField2.setText(denNgay);
+
     }//GEN-LAST:event_cbNamThangQuyActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -126,7 +126,7 @@
                     <Column editable="true" title="T&#xea;n NV" type="java.lang.Object"/>
                     <Column editable="true" title="S&#x1ed1; DT" type="java.lang.Object"/>
                     <Column editable="true" title="Ch&#x1ee9;c V&#x1ee5;" type="java.lang.Object"/>
-                    <Column editable="true" title="L&#x1b0;&#x1a1;ng" type="java.lang.Object"/>
+                    <Column editable="true" title="L&#x1b0;&#x1a1;ng" type="java.lang.Double"/>
                     <Column editable="true" title="T&#xea;n &#x110;&#x103;ng Nh&#x1ead;p" type="java.lang.Object"/>
                   </Table>
                 </Property>

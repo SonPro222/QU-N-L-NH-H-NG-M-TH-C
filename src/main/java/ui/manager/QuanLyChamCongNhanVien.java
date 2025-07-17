@@ -223,7 +223,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Mã NV", "Tên NV", "Ngày ", "Có Mặt", "Gi Chú"
+                "Mã NV", "Tên NV", "Ngày ", "Có Mặt", "Ghi chú"
             }
         ) {
             Class[] types = new Class [] {
@@ -271,9 +271,16 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
                 "Mã NV", "Tên NV", " Ngày Bắt Đầu Làm", "Số Ngày Làm", "Só Ngày Nghỉ", "Trừ Lương", "Tổng Lương"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Double.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, true, false, false, true, true
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];

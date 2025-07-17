@@ -155,7 +155,15 @@ public void fillTableChiTieu() {
             new String [] {
                 "Mã CT", "Ngày", "Số Tiền", "Mô Tả"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tblChiTieu);
         if (tblChiTieu.getColumnModel().getColumnCount() > 0) {
             tblChiTieu.getColumnModel().getColumn(0).setMinWidth(50);
