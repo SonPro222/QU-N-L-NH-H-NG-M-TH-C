@@ -35,7 +35,7 @@ public class QuanLyChiTieu extends javax.swing.JDialog {
         setResizable(false);          // <-- không cho kéo giãn
         setLocationRelativeTo(null);
         setTitle("Quản lý Chi Tiêu");
- 
+
     }
 
     public void addChiTieu() {
@@ -72,11 +72,14 @@ public class QuanLyChiTieu extends javax.swing.JDialog {
                     "Xác nhận thêm", JOptionPane.YES_NO_OPTION);
 
             if (choice != JOptionPane.YES_OPTION) {
-                return; 
+                return;
             }
 
             ChiTieu ct = new ChiTieu();
-            ct.setNgay(java.time.LocalDate.now().toString()); // yyyy-MM-dd
+            java.util.Date currentDateUtil = new java.util.Date();  // Ngày hiện tại
+            java.sql.Date currentDateSql = new java.sql.Date(currentDateUtil.getTime());  // Chuyển thành java.sql.Date
+
+            ct.setNgay(currentDateSql);  // yyyy-MM-dd
             ct.setSoTien(soTien);
             ct.setMoTa(moTa);
 
@@ -112,21 +115,21 @@ public class QuanLyChiTieu extends javax.swing.JDialog {
             };
             model.addRow(row);
         }
-         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
-    // Áp dụng renderer cho cột "Mã CT" (cột 0)
-    tblChiTieu.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-    
-    // Áp dụng renderer cho cột "Ngày" (cột 1)
-    tblChiTieu.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        // Áp dụng renderer cho cột "Mã CT" (cột 0)
+        tblChiTieu.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 
-    // Tạo renderer căn phải cho cột "Mô Tả" (cột 3)
-    DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-    rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+        // Áp dụng renderer cho cột "Ngày" (cột 1)
+        tblChiTieu.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 
-    // Áp dụng renderer cho cột "Mô Tả" (cột 3)
-    tblChiTieu.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        // Tạo renderer căn phải cho cột "Mô Tả" (cột 3)
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        // Áp dụng renderer cho cột "Mô Tả" (cột 3)
+        tblChiTieu.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
     }
 
     @SuppressWarnings("unchecked")

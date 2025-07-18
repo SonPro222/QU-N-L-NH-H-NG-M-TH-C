@@ -5,6 +5,7 @@
 package entity;
 
 
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ChiTieu {
    private int MaChiTieu;
-    private String Ngay;
-    private float SoTien;
+    private Date Ngay;
+    private double SoTien;
     private String MoTa;
 }

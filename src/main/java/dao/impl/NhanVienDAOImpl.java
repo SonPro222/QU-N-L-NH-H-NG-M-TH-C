@@ -17,7 +17,6 @@ public class NhanVienDAOImpl implements NhanVienDAO {
     final String UPDATE_SQL = "UPDATE NHANVIEN SET TenNV = ?, SDT = ?, ChucVu = ?, Luong = ?, SoNgayLam = ?, SoNgayNghi = ?,  WHERE MaNV = ?";
     final String SELECT_ALL_SQL = "SELECT * FROM NHANVIEN";
     final String SELECT_BY_ID_SQL = "SELECT * FROM NHANVIEN WHERE MaNV = ?";
-
     @Override
     public void insert(NhanVien nv) {
         XJdbc.update(INSERT_SQL,
@@ -29,7 +28,6 @@ public class NhanVienDAOImpl implements NhanVienDAO {
             nv.getSoNgayNghi()
         );
     }
-
     @Override
     public void update(NhanVien nv) {
         XJdbc.update(UPDATE_SQL,
@@ -42,7 +40,6 @@ public class NhanVienDAOImpl implements NhanVienDAO {
             nv.getMaNV()
         );
     }
-
 @Override
 public void deleteById(Integer maNV) {
     try (Connection conn = XJdbc.getConnection()) {
@@ -51,7 +48,6 @@ public void deleteById(Integer maNV) {
             ps1.setInt(1, maNV);
             ps1.executeUpdate();
         }
-
         try (PreparedStatement ps2 = conn.prepareStatement("DELETE FROM TAIKHOAN WHERE MaNV = ?")) {
             ps2.setInt(1, maNV);
             ps2.executeUpdate();
@@ -112,7 +108,6 @@ public void deleteById(Integer maNV) {
         return list;
     }
 
-    // ✅ Tìm kiếm theo từ khóa (mã hoặc tên)
     public List<NhanVien> findByKeyword(String keyword) {
         try {
             int maNV = Integer.parseInt(keyword);

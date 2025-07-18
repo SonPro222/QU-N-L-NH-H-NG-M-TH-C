@@ -15,7 +15,7 @@ public class DoanhThuDAOImpl implements DoanhThuDAO {
     @Override
     public List<DoanhThu> findAll() {
         List<DoanhThu> list = new ArrayList<>();
-        String sql = "SELECT * FROM DOANHTHU ORDER BY Ngay DESC";
+        String sql = "SELECT * FROM THONGKEDOANHTHU ORDER BY Ngay DESC";
         try (Connection con = XJdbc.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -62,9 +62,9 @@ public void capNhatDoanhThuTuHoaDonVaChiTieu() {
 
                 DoanhThu dt = findByDate(ngay);
                 if (dt == null) {
-                    XJdbc.update("INSERT INTO DOANHTHU (Ngay, TongThu) VALUES (?, ?)", ngay, tongThu);
+                    XJdbc.update("INSERT INTO THONGKEDOANHTHU (Ngay, TongThu) VALUES (?, ?)", ngay, tongThu);
                 } else {
-                    XJdbc.update("UPDATE DOANHTHU SET TongThu = ? WHERE Ngay = ?", tongThu, ngay);
+                    XJdbc.update("UPDATE THONGKEDOANHTHU SET TongThu = ? WHERE Ngay = ?", tongThu, ngay);
                 }
             }
         }
@@ -80,9 +80,9 @@ public void capNhatDoanhThuTuHoaDonVaChiTieu() {
 
                 DoanhThu dt = findByDate(ngay);
                 if (dt == null) {
-                    XJdbc.update("INSERT INTO DOANHTHU (Ngay, TongChi) VALUES (?, ?)", ngay, tongChi);
+                    XJdbc.update("INSERT INTO THONGKEDOANHTHU (Ngay, TongChi) VALUES (?, ?)", ngay, tongChi);
                 } else {
-                    XJdbc.update("UPDATE DOANHTHU SET TongChi = ? WHERE Ngay = ?", tongChi, ngay);
+                    XJdbc.update("UPDATE THONGKEDOANHTHU SET TongChi = ? WHERE Ngay = ?", tongChi, ngay);
                 }
             }
         }
@@ -95,7 +95,7 @@ public void capNhatDoanhThuTuHoaDonVaChiTieu() {
 @Override
 public List<DoanhThu> findByDateRange(Date from, Date to) {
     List<DoanhThu> list = new ArrayList<>();
-    String sql = "SELECT * FROM DOANHTHU WHERE Ngay BETWEEN ? AND ? ORDER BY Ngay DESC";
+    String sql = "SELECT * FROM THONGKEDOANHTHU WHERE Ngay BETWEEN ? AND ? ORDER BY Ngay DESC";
 
     try (Connection con = XJdbc.getConnection();
          PreparedStatement ps = con.prepareStatement(sql)) {
@@ -125,17 +125,17 @@ public List<DoanhThu> findByDateRange(Date from, Date to) {
         DoanhThu existing = findByDate(dt.getNgay());
         if (existing == null) {
             // Insert
-            String sql = "INSERT INTO DOANHTHU (Ngay, TongThu, TongChi, GhiChu) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO THONGKEDOANHTHU (Ngay, TongThu, TongChi, GhiChu) VALUES (?, ?, ?, ?)";
             XJdbc.update(sql, dt.getNgay(), dt.getTongThu(), dt.getTongChi(), dt.getGhiChu());
         } else {
             // Update
-            String sql = "UPDATE DOANHTHU SET TongThu = ?, TongChi = ?, GhiChu = ? WHERE Ngay = ?";
+            String sql = "UPDATE THONGKEDOANHTHU SET TongThu = ?, TongChi = ?, GhiChu = ? WHERE Ngay = ?";
             XJdbc.update(sql, dt.getTongThu(), dt.getTongChi(), dt.getGhiChu(), dt.getNgay());
         }
     }
 
     public DoanhThu findByDate(java.util.Date date) {
-        String sql = "SELECT * FROM DOANHTHU WHERE Ngay = ?";
+        String sql = "SELECT * FROM THONGKEDOANHTHU WHERE Ngay = ?";
         try (Connection con = XJdbc.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -160,7 +160,7 @@ public List<DoanhThu> findByDateRange(Date from, Date to) {
 
     @Override
     public DoanhThu findByDate(java.sql.Date date) {
-        String sql = "SELECT * FROM DOANHTHU WHERE Ngay = ?";
+        String sql = "SELECT * FROM THONGKEDOANHTHU WHERE Ngay = ?";
         try (Connection con = XJdbc.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -184,7 +184,7 @@ public List<DoanhThu> findByDateRange(Date from, Date to) {
     @Override
     public List<DoanhThu> findByMonthYear(Integer thang, Integer nam) {
         List<DoanhThu> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM DOANHTHU WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT * FROM THONGKEDOANHTHU WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
         if (thang != null) {
@@ -223,7 +223,7 @@ public List<DoanhThu> findByDateRange(Date from, Date to) {
 
     @Override
     public void insertThuCong(String ngay, double tongThu, double tongChi, String ghiChu) {
-        String sql = "INSERT INTO DOANHTHU (Ngay, TongThu, TongChi, GhiChu) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO THONGKEDOANHTHU (Ngay, TongThu, TongChi, GhiChu) VALUES (?, ?, ?, ?)";
         try {
             java.sql.Date sqlDate = java.sql.Date.valueOf(ngay);
             XJdbc.update(sql, sqlDate, tongThu, tongChi, ghiChu);

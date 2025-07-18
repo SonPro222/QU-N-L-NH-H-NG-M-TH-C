@@ -18,6 +18,17 @@
     <artifactId>jbcrypt</artifactId>
     <version>0.4</version>
 </dependency>
+<dependency>
+<!--    xuất five excel-->
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi</artifactId>
+    <version>5.2.3</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>5.2.3</version>
+</dependency>
 
         <dependency>
             <groupId>org.netbeans.external</groupId>

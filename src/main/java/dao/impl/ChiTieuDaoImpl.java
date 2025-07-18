@@ -5,6 +5,7 @@
 package dao.impl;
 import dao.ChiTieuDao;
 import entity.ChiTieu;
+import entity.PhieuTraLuong;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,7 +37,7 @@ public class ChiTieuDaoImpl implements ChiTieuDao {
             ChiTieu ct = new ChiTieu();
             ct.setMaChiTieu(rs.getInt("MaCT"));
             Date date = rs.getDate("Ngay");
-            ct.setNgay(date != null ? date.toString() : null);
+            ct.setNgay(date);
             ct.setSoTien(rs.getFloat("SoTien"));
             ct.setMoTa(rs.getString("MoTa"));
             list.add(ct);
@@ -54,12 +55,13 @@ public class ChiTieuDaoImpl implements ChiTieuDao {
         try (Connection conn = XJdbc.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Kiểm tra null và định dạng ngày
-            if (ct.getNgay() == null) {
-                stmt.setNull(1, java.sql.Types.DATE);
-            } else {
-                stmt.setDate(1, java.sql.Date.valueOf(ct.getNgay()));
-            }
-            stmt.setFloat(2, ct.getSoTien());
+              if (ct.getNgay() == null) {
+            stmt.setNull(1, java.sql.Types.DATE); // Nếu ngày là null, set giá trị null vào trường
+        } else {
+            // Nếu ngày không null, trực tiếp set Date
+            stmt.setDate(1, new java.sql.Date(ct.getNgay().getTime())); // Chuyển từ java.util.Date sang java.sql.Date
+        }
+            stmt.setDouble(2, ct.getSoTien());
             stmt.setString(3, ct.getMoTa());
             stmt.executeUpdate();
             System.out.println("✔ Thêm chi tiêu thành công!");
@@ -81,7 +83,7 @@ public class ChiTieuDaoImpl implements ChiTieuDao {
                 ChiTieu ct = new ChiTieu();
                 ct.setMaChiTieu(rs.getInt("MaCT"));
                 Date date = rs.getDate("Ngay");
-                ct.setNgay(date != null ? date.toString() : null);
+                ct.setNgay(date);
                 ct.setSoTien(rs.getFloat("SoTien"));
                 ct.setMoTa(rs.getString("MoTa"));
                 list.add(ct);
@@ -179,6 +181,59 @@ public float TongChiTrongKhoang(LocalDate tuNgay, LocalDate denNgay) {
     }
 
     return tong;
+} 
+//====================Trả Lương ====================
+@Override
+public List<PhieuTraLuong> findByPhieuLuongId(int MaPhieuLuong) {
+    List<PhieuTraLuong> list = new ArrayList<>();
+    String sql = "SELECT * FROM PHIEUTRALUONG WHERE MaPhieuLuong = ?";
+
+    try (Connection conn = XJdbc.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, MaPhieuLuong);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            PhieuTraLuong phieu = new PhieuTraLuong();
+            phieu.setMaPhieuLuong(rs.getInt("MaPhieuLuong"));
+            phieu.setMaNV(rs.getInt("MaNV"));
+            Date date = rs.getDate("NgayThanhToan");
+            // Đảm bảo rằng `NgayThanhToan` là kiểu Date, không phải String
+            phieu.setNgayThanhToan(date);  // Gán trực tiếp Date thay vì String
+            phieu.setTongLuong(rs.getFloat("TongLuong"));
+            phieu.setLuongTru(rs.getFloat("LuongTru"));
+            phieu.setGhiChu(rs.getString("GhiChu"));
+            list.add(phieu);
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Lỗi truy vấn Phiếu Trả Lương theo mã: " + e.getMessage());
+    }
+    return list;
 }
 
+@Override
+public void createPhieuTraLuong(PhieuTraLuong phieu) {
+    String sql = "INSERT INTO PHIEUTRALUONG (MaNV, NgayThanhToan, TongLuong, LuongTru, GhiChu, LyDoTruLuong) VALUES (?, ?, ?, ?, ?, ?)";
+    try (Connection conn = XJdbc.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, phieu.getMaNV());
+        java.util.Date currentDateUtil = new java.util.Date();
+        stmt.setDate(2, (java.sql.Date) currentDateUtil);
+        stmt.setDouble(3, phieu.getTongLuong());
+        stmt.setDouble(4, phieu.getLuongTru());
+        stmt.setString(5, phieu.getGhiChu());
+        stmt.executeUpdate();
+    } catch (SQLException | IllegalArgumentException e) {
+    }
 }
+
+
+}
+
+
+
+
+

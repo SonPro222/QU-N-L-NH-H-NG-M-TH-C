@@ -14,10 +14,12 @@ E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\impl\HoaDonDAOImpl
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\impl\LichSuGiaoDichDAOImpl.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\impl\MonAnDAOImpl.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\impl\NhanVienDAOImpl.java
+E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\impl\PhieuTraLuongDAOImpl.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\impl\UserDAOImpl.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\LichSuGiaoDichDAO.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\MonAnDAO.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\NhanVienDAO.java
+E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\PhieuTraLuongDAO.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\dao\UserDAO.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\entity\ChamCong.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\entity\ChiTietMonAn.java
@@ -28,6 +30,7 @@ E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\entity\HoaDonChiTiet.j
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\entity\LichSuGiaoDich.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\entity\MonAn.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\entity\NhanVien.java
+E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\entity\PhieuTraLuong.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\entity\User.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\Itf\QuanLyNhaHangController.java
 E:\DUAN\DUAN1\QuanLyNhaHangAmThucVietNamPRO\src\main\java\pro\RoundedPanel.java

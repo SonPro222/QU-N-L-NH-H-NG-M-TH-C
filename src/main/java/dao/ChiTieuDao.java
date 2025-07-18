@@ -5,6 +5,7 @@
 package dao;
 
 import entity.ChiTieu;
+import entity.PhieuTraLuong;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,5 +17,7 @@ public interface ChiTieuDao {
     float TongChiTieuTheoThang(int thang, int nam); // sửa lại tham số và kiểu trả về
     float TongChiTieuTheoNam(int nam); // sửa lại tham số và kiểu trả về
     float TongChiTrongKhoang(LocalDate tuNgay, LocalDate denNgay);
+    public List<PhieuTraLuong> findByPhieuLuongId(int MaPhieuLuong) ;
+    public void createPhieuTraLuong(PhieuTraLuong phieu);
 
 }
