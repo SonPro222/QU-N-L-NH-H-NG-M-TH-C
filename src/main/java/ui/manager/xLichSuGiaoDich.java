@@ -180,16 +180,9 @@ public class xLichSuGiaoDich extends javax.swing.JDialog {
                 "Mã phiếu", "Ngày tạo", "Trạng thái", "Nhân viên", "Bàn", "Tổng tiền"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class
-            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -207,15 +200,7 @@ public class xLichSuGiaoDich extends javax.swing.JDialog {
             new String [] {
                 "MaHD", "MaCT", "Tên Món", "Số Lượng", "Đơn Giá"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Double.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
+        ));
         jScrollPane2.setViewportView(tblChiTietHoaDon);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N

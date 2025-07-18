@@ -2,7 +2,6 @@ ui\manager\QuanLyNhaHang$8.class
 ui\manager\DatMon$14.class
 entity\MonAn$MonAnBuilder.class
 ui\manager\DatMon$3.class
-ui\manager\QuanLyChiTieu$4.class
 uui\Login$1.class
 ui\manager\QuanLyMonAn$27.class
 entity\ChiTietMonAn.class
@@ -10,7 +9,6 @@ entity\NhanVien.class
 ui\manager\QuanLyMonAn$2.class
 ui\manager\QuanLyMonAn$7.class
 ui\manager\QuanLyNhaHang$2.class
-ui\manager\xLichSuGiaoDich$5.class
 entity\MonAn.class
 ui\manager\QuanLyMonAn$21.class
 dao\impl\HoaDonChiTietDAOImpl.class
