@@ -293,6 +293,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n L&#xfd;"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkManagerActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
           <Properties>

@@ -11,6 +11,14 @@
     <artifactId>jcalendar</artifactId>
     <version>1.4</version>
 </dependency>
+
+<dependency>
+<!--    mã hóa mật khẩu-->
+    <groupId>org.mindrot</groupId>
+    <artifactId>jbcrypt</artifactId>
+    <version>0.4</version>
+</dependency>
+
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>

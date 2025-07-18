@@ -100,10 +100,10 @@
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                           <Table columnCount="4" rowCount="4">
-                            <Column editable="true" title="M&#xe3; CT" type="java.lang.Object"/>
-                            <Column editable="true" title="Ng&#xe0;y" type="java.lang.Object"/>
-                            <Column editable="true" title="S&#x1ed1; Ti&#x1ec1;n" type="java.lang.Object"/>
-                            <Column editable="true" title="M&#xf4; T&#x1ea3;" type="java.lang.Object"/>
+                            <Column editable="false" title="M&#xe3; CT" type="java.lang.Integer"/>
+                            <Column editable="false" title="Ng&#xe0;y" type="java.lang.String"/>
+                            <Column editable="false" title="S&#x1ed1; Ti&#x1ec1;n" type="java.lang.Long"/>
+                            <Column editable="false" title="M&#xf4; T&#x1ea3;" type="java.lang.String"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

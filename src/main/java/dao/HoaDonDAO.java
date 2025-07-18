@@ -19,5 +19,6 @@ public interface HoaDonDAO {
     void update(HoaDon hd);
      int xoaHoaDonRac();  
      void deleteById(int maHD);
+     public boolean updateNhanVienThanhToan(HoaDon hoaDon);
 
 }

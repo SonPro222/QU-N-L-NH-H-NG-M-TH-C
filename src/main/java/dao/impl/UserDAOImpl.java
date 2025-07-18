@@ -80,5 +80,11 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List findAllWithMonAn() {
         throw new UnsupportedOperationException("Not supported in UserDAOImpl.");
-    }
+    }@Override
+public boolean existsByMaNV(int maNV) {
+    String sql = "SELECT COUNT(*) FROM TAIKHOAN WHERE MaNV = ?";
+    Integer count = (Integer) XJdbc.value(sql, maNV);
+    return count != null && count > 0;
+}
+
 }

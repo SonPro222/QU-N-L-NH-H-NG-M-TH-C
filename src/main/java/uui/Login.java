@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import ui.manager.QuanLyNhaHang;
 import util.XAuth;
 import util.XDialog;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class Login extends javax.swing.JDialog {
 
@@ -33,48 +34,93 @@ public class Login extends javax.swing.JDialog {
     }
     UserDAO dao = new UserDAOImpl();
     NhanVienDAO nvDAO = new NhanVienDAOImpl();
-
     private void login() {
-        String username = txtUsername.getText().trim();
-        String password = new String(txtPassword.getPassword()).trim();
+    String username = txtUsername.getText().trim();
+    String password = new String(txtPassword.getPassword()).trim();
 
-        if (username.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên đăng nhập!");
-            return;
-        }
-
-        if (password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
-            return;
-        }
-
-        // Tìm User từ tên đăng nhập
-        User user = dao.findById(username);
-        if (user == null) {
-            JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại!");
-            return;
-        }
-
-        if (!user.getMatkhau().equals(password)) {
-            JOptionPane.showMessageDialog(this, "Sai mật khẩu!");
-            return;
-        }   
-        if (!user.getTendangnhap().equals(username)) {
-            JOptionPane.showMessageDialog(this, "Sai tài khoản");
-            return;
-        }
-        NhanVien nv = nvDAO.findById(user.getMaNV());
-        if (nv == null) {
-            return;
-        }
-
-        Auth.nhanVienDangNhap = nv;
-        XAuth.user = user;
-      
-    
-        JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
-        this.dispose(); // đóng form
+    if (username.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập tên đăng nhập!");
+        return;
     }
+
+    if (password.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
+        return;
+    }
+
+    // Tìm User từ tên đăng nhập
+    User user = dao.findById(username);
+    if (user == null) {
+        JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại!");
+        return;
+    }
+
+    // Sử dụng BCrypt để so sánh mật khẩu đã băm
+    if (!BCrypt.checkpw(password, user.getMatkhau())) {
+        JOptionPane.showMessageDialog(this, "Sai mật khẩu!");
+        return;
+    }
+
+    // Kiểm tra tài khoản
+    if (!user.getTendangnhap().equals(username)) {
+        JOptionPane.showMessageDialog(this, "Sai tài khoản");
+        return;
+    }
+
+    // Lấy thông tin nhân viên từ mã nhân viên trong tài khoản
+    NhanVien nv = nvDAO.findById(user.getMaNV());
+    if (nv == null) {
+        return;
+    }
+
+    // Đăng nhập thành công
+    Auth.nhanVienDangNhap = nv;
+    XAuth.user = user;
+
+    JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+    this.dispose(); // đóng form
+}
+//    private void login() {
+//        String username = txtUsername.getText().trim();
+//        String password = new String(txtPassword.getPassword()).trim();
+//
+//        if (username.isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên đăng nhập!");
+//            return;
+//        }
+//
+//        if (password.isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
+//            return;
+//        }
+//
+//        // Tìm User từ tên đăng nhập
+//        User user = dao.findById(username);
+//        if (user == null) {
+//            JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại!");
+//            return;
+//        }
+//
+//        if (!user.getMatkhau().equals(password)) {
+//            JOptionPane.showMessageDialog(this, "Sai mật khẩu!");
+//            return;
+//        }   
+//        if (!user.getTendangnhap().equals(username)) {
+//            JOptionPane.showMessageDialog(this, "Sai tài khoản");
+//            return;
+//        }
+//        NhanVien nv = nvDAO.findById(user.getMaNV());
+//        if (nv == null) {
+//            return;
+//        }
+//
+//        Auth.nhanVienDangNhap = nv;
+//        XAuth.user = user;
+//      
+//    
+//        JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+//        this.dispose(); // đóng form
+//    }
 
     public void exit() {
         if (XDialog.confirm("Bạn muốn kết thúc?")) {

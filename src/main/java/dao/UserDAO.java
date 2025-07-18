@@ -14,5 +14,6 @@ import entity.User;
 public interface UserDAO extends CrudDAO<User, String> {
      User create(User entity);
      boolean exists(String username);
+     public boolean existsByMaNV(int maNV);
      
 }

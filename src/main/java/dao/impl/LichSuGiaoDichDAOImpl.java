@@ -86,24 +86,41 @@ public List<LichSuGiaoDich> findByDateRange(Date fromDate, Date toDate) {
     }
     return list;
 }
-
-
 @Override
 public void update(LichSuGiaoDich lichSu) {
-    String sql = "UPDATE HOADON SET TrangThai = ?, NgayThanhToan = ? WHERE MaHD = ?";
+    String sql = "UPDATE HOADON SET TrangThai = ?, NgayThanhToan = ?, TenNV = ? WHERE MaHD = ?";
 
     try (Connection conn = XJdbc.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
 
         ps.setString(1, lichSu.getTrangThai());
-//        ps.setTimestamp(2, new Timestamp(lichSu.getNgayThanhToan().getTime()));
-        ps.setInt(3, lichSu.getMaHD());
+        ps.setTimestamp(2, new Timestamp(lichSu.getNgayLap().getTime()));
+        ps.setString(3, lichSu.getTenNhanVien()); // Lưu tên nhân viên thanh toán
+        ps.setInt(4, lichSu.getMaHD());
 
         ps.executeUpdate();
     } catch (SQLException e) {
         e.printStackTrace();
     }
 }
+
+
+//@Override
+//public void update(LichSuGiaoDich lichSu) {
+//    String sql = "UPDATE HOADON SET TrangThai = ?, NgayThanhToan = ? WHERE MaHD = ?";
+//
+//    try (Connection conn = XJdbc.getConnection();
+//         PreparedStatement ps = conn.prepareStatement(sql)) {
+//
+//        ps.setString(1, lichSu.getTrangThai());
+////        ps.setTimestamp(2, new Timestamp(lichSu.getNgayThanhToan().getTime()));
+//        ps.setInt(3, lichSu.getMaHD());
+//
+//        ps.executeUpdate();
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//    }
+//}
 @Override
 public List<LichSuGiaoDich> locHoaDonTheoNgay(String tuNgay, String denNgay) {
     try {

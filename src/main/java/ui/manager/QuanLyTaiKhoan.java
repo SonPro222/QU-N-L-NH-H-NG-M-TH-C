@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -62,6 +63,7 @@ public void fillToTable() {
 }
 
 
+
 public void addAccount() {
     String username = txtUsername.getText().trim();
     String password = new String(txtPassword.getPassword()).trim();
@@ -102,12 +104,21 @@ public void addAccount() {
         return;
     }
 
-    // Kiểm tra mã nhân viên có tồn tại
+    // Kiểm tra mã nhân viên có tồn tại và đã có tài khoản
     NhanVienDAO nvDAO = new NhanVienDAOImpl();
     if (nvDAO.findById(maNV) == null) {
         JOptionPane.showMessageDialog(this, "Mã nhân viên không tồn tại!");
         return;
     }
+
+    // Kiểm tra xem nhân viên đã có tài khoản chưa
+    if (userDAO.existsByMaNV(maNV)) {
+        JOptionPane.showMessageDialog(this, "Nhân viên này đã có tài khoản!");
+        return;
+    }
+
+    // Băm mật khẩu trước khi lưu vào cơ sở dữ liệu
+    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
     // Gán vai trò
     String role = chkManager.isSelected() ? "Quản lý" : "Nhân viên";
@@ -115,7 +126,7 @@ public void addAccount() {
     // Tạo đối tượng User
     User user = User.builder()
             .tendangnhap(username)
-            .matkhau(password)
+            .matkhau(hashedPassword) // Lưu mật khẩu đã được băm
             .vaitro(role)
             .maNV(maNV) // Gán mã nhân viên
             .build();
@@ -254,6 +265,11 @@ public void addAccount() {
 
         group.add(chkManager);
         chkManager.setText("Quản Lý");
+        chkManager.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkManagerActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Quyền");
 
@@ -366,9 +382,11 @@ public void addAccount() {
             if (chkShowPassword.isSelected()) {
                 txtPassword.setEchoChar((char) 0);
                 txtConfirmPassword.setEchoChar((char) 0);
+                txtMaNV.setEchoChar((char)0);
             } else {
                 txtPassword.setEchoChar('*');
                 txtConfirmPassword.setEchoChar('*');
+                
             }
         });
     }//GEN-LAST:event_chkShowPasswordActionPerformed
@@ -392,6 +410,10 @@ public void addAccount() {
     private void txtMaNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaNVActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMaNVActionPerformed
+
+    private void chkManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkManagerActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chkManagerActionPerformed
 
     /**
      * @param args the command line arguments

@@ -15,11 +15,15 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+
 /**
  *
  * @author ACER
  */
-public class QuanLyChiTieu extends javax.swing.JDialog{
+public class QuanLyChiTieu extends javax.swing.JDialog {
 
     /**
      * Creates new form QuanLyChiTieu
@@ -28,93 +32,103 @@ public class QuanLyChiTieu extends javax.swing.JDialog{
         super(parent, modal);
         initComponents();
         fillTableChiTieu();
-           setResizable(false);          // <-- không cho kéo giãn
+        setResizable(false);          // <-- không cho kéo giãn
         setLocationRelativeTo(null);
         setTitle("Quản lý Chi Tiêu");
+ 
     }
-public void addChiTieu() {
-    try {
-        // Lấy và xử lý dữ liệu đầu vào
-        String soTienStr = txtSoTien.getText().trim();
-        String moTa = txtGhiChu.getText().trim();
 
-        // 🔴 Kiểm tra trống
-        if (soTienStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "⚠ Vui lòng nhập số tiền!");
-            txtSoTien.requestFocus();
-            return;
-        }
-
-        // 🔴 Kiểm tra có phải số hợp lệ không
-        float soTien;
+    public void addChiTieu() {
         try {
-            // Dùng BigDecimal để parse và kiểm tra
-            BigDecimal soTienBD = new BigDecimal(soTienStr);
-            if (soTienBD.compareTo(BigDecimal.ZERO) <= 0) {
-                JOptionPane.showMessageDialog(this, "⚠ Số tiền phải lớn hơn 0!");
+            String soTienStr = txtSoTien.getText().trim();
+            String moTa = txtGhiChu.getText().trim();
+
+            // 🔴 Kiểm tra trống
+            if (soTienStr.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "⚠ Vui lòng nhập số tiền!");
                 txtSoTien.requestFocus();
                 return;
             }
-            // Gán lại về float
-            soTien = soTienBD.floatValue();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "⚠ Số tiền phải là số!");
-            txtSoTien.requestFocus();
-            return;
+
+            float soTien;
+            try {
+                // Dùng BigDecimal để parse và kiểm tra
+                BigDecimal soTienBD = new BigDecimal(soTienStr);
+                if (soTienBD.compareTo(BigDecimal.ZERO) <= 0) {
+                    JOptionPane.showMessageDialog(this, "⚠ Số tiền phải lớn hơn 0!");
+                    txtSoTien.requestFocus();
+                    return;
+                }
+                // Gán lại về float
+                soTien = soTienBD.floatValue();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "⚠ Số tiền phải là số!");
+                txtSoTien.requestFocus();
+                return;
+            }
+
+            int choice = JOptionPane.showConfirmDialog(this,
+                    "Bạn có chắc chắn muốn thêm chi tiêu với số tiền: " + soTien + " không?",
+                    "Xác nhận thêm", JOptionPane.YES_NO_OPTION);
+
+            if (choice != JOptionPane.YES_OPTION) {
+                return; 
+            }
+
+            ChiTieu ct = new ChiTieu();
+            ct.setNgay(java.time.LocalDate.now().toString()); // yyyy-MM-dd
+            ct.setSoTien(soTien);
+            ct.setMoTa(moTa);
+
+            ChiTieuDao dao = new ChiTieuDaoImpl();
+            dao.create(ct);
+
+            JOptionPane.showMessageDialog(this, "  Thêm chi tiêu thành công!");
+            fillTableChiTieu();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, " Lỗi: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
 
-        int choice = JOptionPane.showConfirmDialog(this,
-            "Bạn có chắc chắn muốn thêm chi tiêu với số tiền: " + soTien + " không?",
-            "Xác nhận thêm", JOptionPane.YES_NO_OPTION);
+    public void fillTableChiTieu() {
+        DefaultTableModel model = (DefaultTableModel) tblChiTieu.getModel();
+        model.setRowCount(0); // Xóa bảng trước khi đổ mới
 
-        if (choice != JOptionPane.YES_OPTION) {
-            return; // Người dùng không đồng ý
-        }
-
-        // ✅ Tạo đối tượng chi tiêu
-        ChiTieu ct = new ChiTieu();
-        ct.setNgay(java.time.LocalDate.now().toString()); // yyyy-MM-dd
-        ct.setSoTien(soTien);
-        ct.setMoTa(moTa);
-
-        // ✅ Gọi DAO để thêm
         ChiTieuDao dao = new ChiTieuDaoImpl();
-        dao.create(ct);
 
-        JOptionPane.showMessageDialog(this, "  Thêm chi tiêu thành công!");
-        // clearFormChiTieu();
-        fillTableChiTieu();
+        List<ChiTieu> list = dao.findAll(); // Gọi hàm lấy toàn bộ chi tiêu
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, " Lỗi: " + e.getMessage());
-        e.printStackTrace();
+        // ✅ Định dạng số tiền để tránh E notation
+        DecimalFormat df = new DecimalFormat("#,##0.##");
+
+        for (ChiTieu ct : list) {
+            Object[] row = {
+                ct.getMaChiTieu(),
+                ct.getNgay(),
+                df.format(ct.getSoTien()), // ✅ Format float để hiển thị đẹp
+                ct.getMoTa()
+            };
+            model.addRow(row);
+        }
+         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+    // Áp dụng renderer cho cột "Mã CT" (cột 0)
+    tblChiTieu.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+    
+    // Áp dụng renderer cho cột "Ngày" (cột 1)
+    tblChiTieu.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+
+    // Tạo renderer căn phải cho cột "Mô Tả" (cột 3)
+    DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+    rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+
+    // Áp dụng renderer cho cột "Mô Tả" (cột 3)
+    tblChiTieu.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
     }
-}
 
-public void fillTableChiTieu() {
-    DefaultTableModel model = (DefaultTableModel) tblChiTieu.getModel();
-    model.setRowCount(0); // Xóa bảng trước khi đổ mới
-
-    ChiTieuDao dao = new ChiTieuDaoImpl();
-
-    List<ChiTieu> list = dao.findAll(); // Gọi hàm lấy toàn bộ chi tiêu
-
-    // ✅ Định dạng số tiền để tránh E notation
-    DecimalFormat df = new DecimalFormat("#,##0.##");
-
-    for (ChiTieu ct : list) {
-        Object[] row = {
-            ct.getMaChiTieu(),
-            ct.getNgay(),
-            df.format(ct.getSoTien()), // ✅ Format float để hiển thị đẹp
-            ct.getMoTa()
-        };
-        model.addRow(row);
-    }
-}
-
-
-   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -155,7 +169,22 @@ public void fillTableChiTieu() {
             new String [] {
                 "Mã CT", "Ngày", "Số Tiền", "Mô Tả"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Long.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tblChiTieu);
         if (tblChiTieu.getColumnModel().getColumnCount() > 0) {
             tblChiTieu.getColumnModel().getColumn(0).setMinWidth(50);
@@ -313,42 +342,40 @@ public void fillTableChiTieu() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-     addChiTieu(); 
-      txtSoTien.setText("");
-    txtGhiChu.setText("");
+        addChiTieu();
+        txtSoTien.setText("");
+        txtGhiChu.setText("");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    txtSoTien.setText("");
-    txtGhiChu.setText("");// TODO add your handling code here:
+        txtSoTien.setText("");
+        txtGhiChu.setText("");// TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnLocTheoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocTheoActionPerformed
         // TODO add your handling code here:
         ChiTieuDao dao = new ChiTieuDaoImpl();
 
-    try {
-        String tuNgayStr = txtFromDate.getText().trim();
-        String denNgayStr = txtToDate.getText().trim();
+        try {
+            String tuNgayStr = txtFromDate.getText().trim();
+            String denNgayStr = txtToDate.getText().trim();
 
-        if (tuNgayStr.isEmpty() || denNgayStr.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ ngày bắt đầu và kết thúc!");
-            return;
+            if (tuNgayStr.isEmpty() || denNgayStr.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ ngày bắt đầu và kết thúc!");
+                return;
+            }
+
+            LocalDate tuNgay = LocalDate.parse(tuNgayStr);
+            LocalDate denNgay = LocalDate.parse(denNgayStr);
+
+            float tong = dao.TongChiTrongKhoang(tuNgay, denNgay); // ✅ đúng hàm
+
+            txtTongTien.setText(String.format("%,.0f VNĐ", tong));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Định dạng ngày không hợp lệ (yyyy-MM-dd)!");
         }
-
-        LocalDate tuNgay = LocalDate.parse(tuNgayStr);
-        LocalDate denNgay = LocalDate.parse(denNgayStr);
-
-        float tong = dao.TongChiTrongKhoang(tuNgay, denNgay); // ✅ đúng hàm
-
-        txtTongTien.setText(String.format("%,.0f VNĐ", tong));
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Định dạng ngày không hợp lệ (yyyy-MM-dd)!");
-    }
     }//GEN-LAST:event_btnLocTheoActionPerformed
-
-  
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

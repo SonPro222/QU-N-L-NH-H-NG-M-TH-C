@@ -2,6 +2,7 @@ ui\manager\QuanLyNhaHang$8.class
 ui\manager\DatMon$14.class
 entity\MonAn$MonAnBuilder.class
 ui\manager\DatMon$3.class
+ui\manager\QuanLyChiTieu$4.class
 uui\Login$1.class
 ui\manager\QuanLyMonAn$27.class
 entity\ChiTietMonAn.class
@@ -42,7 +43,6 @@ ui\manager\QuanLyNhaHang$3.class
 ui\manager\QuanLyNhanVien$3.class
 ui\manager\QuanLyMonAn$20.class
 dao\impl\ChiTieuDaoImpl.class
-ui\manager\QuanLyNhanVien$4.class
 util\XIcon.class
 entity\HoaDon.class
 ui\manager\QuanLyTaiKhoan$6.class
@@ -56,6 +56,7 @@ dao\impl\NhanVienDAOImpl.class
 util\XDialog$ExcelExporter.class
 uui\Login$2.class
 ui\manager\QuanLyMonAn$13.class
+ui\manager\QuanLyTaiKhoan$8.class
 ui\manager\QuanLyMonAn$15.class
 ui\manager\QuanLyNhaHang$10$1.class
 util\XStr.class
@@ -68,6 +69,7 @@ ui\manager\QuanLyMonAn$14.class
 ui\manager\QuanLyNhaHang$6.class
 dao\impl\LichSuGiaoDichDAOImpl.class
 ui\manager\QuanLyMonAn$6.class
+ui\manager\QuanLyNhanVien$3$1.class
 entity\HoaDonChiTiet.class
 ui\manager\QuanLyChamCongNhanVien$3.class
 ui\manager\QuanLyMonAn$17.class
@@ -125,7 +127,6 @@ ui\manager\ThongKeDoanhThu.class
 ui\manager\DatMon$10.class
 ui\manager\xLichSuGiaoDich$1.class
 ui\manager\BanAn$1.class
-ui\manager\QuanLyNhanVien$4$1.class
 ui\manager\QuanLyChamCongNhanVien$1.class
 ui\manager\DatMon$4.class
 ui\manager\QuanLyMonAn$1.class

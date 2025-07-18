@@ -38,7 +38,7 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
             System.exit(0); // Không có user => thoát
             return;
         }
-        if (!"quan ly".equalsIgnoreCase(XAuth.user.getVaitro())) {
+        if (!"Quản lý".equalsIgnoreCase(XAuth.user.getVaitro())) {
             btnQuanLyTaiKhoan.setVisible(false);
             btnQuanLyChiTieu.setVisible(false);
             btnQuanLyNhanVien.setVisible(false);
