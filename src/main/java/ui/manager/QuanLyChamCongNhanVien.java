@@ -326,129 +326,125 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         }
     }
 
-    public void loc() {
-        String maNVStr = txtMaNV.getText().trim();
-        String tenNVKeyword = txtTennhanvien.getText().trim().toLowerCase();
-        String thangNamStr = txtNgaythanhtoan.getText().trim(); // yyyy/MM
+    private void fillToTableBangLuongChiTiet1() {
+        DefaultTableModel model = (DefaultTableModel) tblBangLuongChiTiet1.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
 
-        Integer maNV = null;
+        String maNVStr = txtMaNV.getText().trim();
+        String tenNV = txtTennhanvien.getText().trim().toLowerCase();
+        String ngayThanhToanStr = txtNgaythanhtoan.getText().trim();
+
+        PhieuTraLuongDAO dao = new PhieuTraLuongDAOImpl();
+        List<PhieuTraLuong> danhSach = dao.findAll();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (PhieuTraLuong ptl : danhSach) {
+            boolean matchMaNV = true;
+            boolean matchTenNV = true;
+            boolean matchNgay = true;
+
+            // So sánh mã nhân viên nếu có nhập
+            if (!maNVStr.isEmpty()) {
+                try {
+                    int maNV = Integer.parseInt(maNVStr);
+                    matchMaNV = ptl.getMaNV() == maNV;
+                } catch (NumberFormatException e) {
+                    matchMaNV = false; // Nhập không phải số
+                }
+            }
+
+            // So sánh tên nhân viên nếu có nhập
+            if (!tenNV.isEmpty()) {
+                matchTenNV = ptl.getTenNV().toLowerCase().contains(tenNV);
+            }
+
+            // So sánh ngày thanh toán nếu có nhập
+            if (!ngayThanhToanStr.isEmpty()) {
+                try {
+                    String ngayPTL = sdf.format(ptl.getNgayThanhToan());
+                    matchNgay = ngayPTL.contains(ngayThanhToanStr);
+                } catch (Exception e) {
+                    matchNgay = false;
+                }
+            }
+
+            // Nếu thỏa tất cả điều kiện thì add vào bảng
+            if (matchMaNV && matchTenNV && matchNgay) {
+                model.addRow(new Object[]{
+                    ptl.getMaPhieuLuong(),
+                    ptl.getMaNV(),
+                    ptl.getTenNV(),
+                    sdf.format(ptl.getNgayThanhToan()),
+                    ptl.getTongLuong(),
+                    ptl.getLuongTru(),
+                    ptl.getGhiChu()
+                });
+            }
+        }
+    }
+
+    private void fillBangLuong1() {
+        DefaultTableModel model = (DefaultTableModel) tblBangLuong.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
+
+        String maNVStr = txtMaNhanVien.getText().trim();
+        String tenNVKeyword = txtTenNhanVien.getText().trim().toLowerCase();
+
+        Integer maNVFilter = null;
         if (!maNVStr.isEmpty()) {
             try {
-                maNV = Integer.parseInt(maNVStr);
+                maNVFilter = Integer.parseInt(maNVStr);
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Mã nhân viên phải là số.");
+                JOptionPane.showMessageDialog(this, "Mã nhân viên phải là số nguyên.");
                 return;
             }
         }
 
-        Date tuNgay = null, denNgay = null;
-        if (!thangNamStr.isEmpty()) {
-            tuNgay = XDate.parse("01/" + thangNamStr, "dd/yyyy/MM");
-            if (tuNgay == null) {
-                JOptionPane.showMessageDialog(this, "Tháng thanh toán sai định dạng. Ví dụ: 2025/07");
-                return;
+        ChamCongService chamCongService = new ChamCongService();
+        LocalDate now = LocalDate.now();
+        int thang = now.getMonthValue();
+        int nam = now.getYear();
+
+        List<Object[]> allData = chamCongService.thongKeCongVaLuongTheoThang(thang, nam);
+        List<Object[]> filtered = new ArrayList<>();
+
+        for (Object[] row : allData) {
+            Integer maNVData;
+            String tenNVData;
+
+            try {
+                maNVData = Integer.valueOf(row[0].toString().trim());
+            } catch (Exception e) {
+                continue;
             }
-            LocalDate start = tuNgay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
-            denNgay = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+            tenNVData = (row[1] != null) ? row[1].toString().toLowerCase() : "";
+
+            boolean matchMa = (maNVFilter == null) || maNVData.equals(maNVFilter);
+            boolean matchTen = tenNVKeyword.isEmpty() || tenNVData.contains(tenNVKeyword);
+
+            if (matchMa && matchTen) {
+                filtered.add(row);
+            }
         }
 
-        // 🔍 Gọi DAO hoặc lấy tất cả
-        List<PhieuTraLuong> list;
-        if (maNV != null && tuNgay != null && denNgay != null) {
-            list = phieuTraLuongDAO.findByMaNVAndNgay(maNV, tuNgay, denNgay);
-        } else {
-            list = phieuTraLuongDAO.findAll();
-        }
-
-        // ✅ Lọc thêm theo tên nhân viên (nếu nhập)
-        if (!tenNVKeyword.isEmpty()) {
-            list = list.stream()
-                    .filter(p -> p.getTenNV().toLowerCase().contains(tenNVKeyword))
-                    .toList();
-        }
-
-        // 📋 Hiển thị dữ liệu ra bảng
-        DefaultTableModel model = (DefaultTableModel) tblBangLuongChiTiet1.getModel();
-        model.setRowCount(0);
-        for (PhieuTraLuong phieu : list) {
+        for (Object[] row : filtered) {
             model.addRow(new Object[]{
-                phieu.getMaPhieuLuong(),
-                phieu.getMaNV(),
-                phieu.getTenNV(),
-                XDate.format(phieu.getNgayThanhToan(), "dd/MM/yyyy"),
-                phieu.getLuongTru(),
-                phieu.getTongLuong(),
-                phieu.getGhiChu()
+                row[0], // Mã NV
+                row[1], // Tên NV
+                row[2], // Ngày bắt đầu
+                row[3], // Số ngày làm
+                row[4], // Số ngày nghỉ
+                row[5], // Trừ lương
+                row[6] // Tổng lương
             });
         }
 
-        if (list.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy phiếu trả lương phù hợp.");
+        if (filtered.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên phù hợp.");
         }
     }
- private void fillBangLuong1() {
-    DefaultTableModel model = (DefaultTableModel) tblBangLuong.getModel();
-    model.setRowCount(0); // Xóa dữ liệu cũ
-
-    String maNVStr = txtMaNhanVien.getText().trim();
-    String tenNVKeyword = txtTenNhanVien.getText().trim().toLowerCase();
-
-    Integer maNVFilter = null;
-    if (!maNVStr.isEmpty()) {
-        try {
-            maNVFilter = Integer.parseInt(maNVStr);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Mã nhân viên phải là số nguyên.");
-            return;
-        }
-    }
-
-    ChamCongService chamCongService = new ChamCongService();
-    LocalDate now = LocalDate.now();
-    int thang = now.getMonthValue();
-    int nam = now.getYear();
-
-    List<Object[]> allData = chamCongService.thongKeCongVaLuongTheoThang(thang, nam);
-    List<Object[]> filtered = new ArrayList<>();
-
-    for (Object[] row : allData) {
-        Integer maNVData;
-        String tenNVData;
-
-        try {
-            maNVData = Integer.valueOf(row[0].toString().trim());
-        } catch (Exception e) {
-            continue;
-        }
-
-        tenNVData = (row[1] != null) ? row[1].toString().toLowerCase() : "";
-
-        boolean matchMa = (maNVFilter == null) || maNVData.equals(maNVFilter);
-        boolean matchTen = tenNVKeyword.isEmpty() || tenNVData.contains(tenNVKeyword);
-
-        if (matchMa && matchTen) {
-            filtered.add(row);
-        }
-    }
-
-    for (Object[] row : filtered) {
-        model.addRow(new Object[]{
-            row[0], // Mã NV
-            row[1], // Tên NV
-            row[2], // Ngày bắt đầu
-            row[3], // Số ngày làm
-            row[4], // Số ngày nghỉ
-            row[5], // Trừ lương
-            row[6]  // Tổng lương
-        });
-    }
-
-    if (filtered.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên phù hợp.");
-    }
-}
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -480,6 +476,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         txtTennhanvien = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtNgaythanhtoan = new javax.swing.JTextField();
+        btnHienthi = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -676,6 +673,14 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         jPanel3.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 400, -1, -1));
         jPanel3.add(txtNgaythanhtoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 390, 130, -1));
 
+        btnHienthi.setText("Hiển thị tất cả");
+        btnHienthi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHienthiActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnHienthi, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 390, -1, -1));
+
         jTabbedPane1.addTab("Bảng Lương Chi Tiết", jPanel3);
 
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 30, 900, 480));
@@ -699,7 +704,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
     }//GEN-LAST:event_txtMaNVActionPerformed
 
     private void btnLocbangluongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocbangluongActionPerformed
-        loc(); // TODO add your handling code here:
+        fillToTableBangLuongChiTiet1(); // TODO add your handling code here:
 
     }//GEN-LAST:event_btnLocbangluongActionPerformed
 
@@ -716,10 +721,16 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMaNhanVienActionPerformed
 
+    private void btnHienthiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHienthiActionPerformed
+        // TODO add your handling code here:
+        fillToTableBangLuongChiTiet1();
+    }//GEN-LAST:event_btnHienthiActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBangLuong;
     private javax.swing.JButton btnChamCong;
+    private javax.swing.JButton btnHienthi;
     private javax.swing.JButton btnLocbangluong;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;

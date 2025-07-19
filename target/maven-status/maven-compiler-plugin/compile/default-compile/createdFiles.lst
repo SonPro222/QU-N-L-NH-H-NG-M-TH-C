@@ -124,6 +124,7 @@ dao\LichSuGiaoDichDAO.class
 entity\User$UserBuilder.class
 dao\impl\HoaDonDAOImpl.class
 ui\manager\QuanLyMonAn.class
+ui\manager\QuanLyChamCongNhanVien$11.class
 ui\manager\DatMon$13.class
 ui\manager\DatMon$7.class
 entity\LichSuGiaoDich.class
