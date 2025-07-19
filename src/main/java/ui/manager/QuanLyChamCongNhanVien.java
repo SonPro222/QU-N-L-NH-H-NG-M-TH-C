@@ -56,7 +56,6 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         initComponents();
         fillTableChamCongTheoNhanVien();
         fillNgayHienTai();
-
         fillBangLuongTheoThang(thang, nam);
         setResizable(false);          // <-- không cho kéo giãn
         setLocationRelativeTo(null);

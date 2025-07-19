@@ -72,7 +72,7 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1051, -1));
 
-        btnQuanLyMonAn.setBackground(new java.awt.Color(102, 102, 102));
+        btnQuanLyMonAn.setBackground(new java.awt.Color(153, 153, 153));
         btnQuanLyMonAn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnQuanLyMonAn.setForeground(new java.awt.Color(0, 51, 51));
         btnQuanLyMonAn.setText("Quản Lý Món Ăn");
@@ -83,7 +83,7 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
         });
         getContentPane().add(btnQuanLyMonAn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, 250, 40));
 
-        btnKetThuc.setBackground(new java.awt.Color(102, 102, 102));
+        btnKetThuc.setBackground(new java.awt.Color(153, 153, 153));
         btnKetThuc.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnKetThuc.setForeground(new java.awt.Color(0, 51, 51));
         btnKetThuc.setText("Kết Thúc");
@@ -94,7 +94,7 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
         });
         getContentPane().add(btnKetThuc, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 500, 250, 40));
 
-        btnQuanLyNhanVien.setBackground(new java.awt.Color(102, 102, 102));
+        btnQuanLyNhanVien.setBackground(new java.awt.Color(153, 153, 153));
         btnQuanLyNhanVien.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnQuanLyNhanVien.setForeground(new java.awt.Color(0, 51, 51));
         btnQuanLyNhanVien.setText("Quản Lý Nhân Viên");
@@ -103,9 +103,9 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
                 btnQuanLyNhanVienActionPerformed(evt);
             }
         });
-        getContentPane().add(btnQuanLyNhanVien, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 500, 250, 40));
+        getContentPane().add(btnQuanLyNhanVien, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 250, 40));
 
-        btnQuanLyTaiKhoan.setBackground(new java.awt.Color(102, 102, 102));
+        btnQuanLyTaiKhoan.setBackground(new java.awt.Color(153, 153, 153));
         btnQuanLyTaiKhoan.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnQuanLyTaiKhoan.setForeground(new java.awt.Color(0, 51, 51));
         btnQuanLyTaiKhoan.setText("Quản lý Tài Khoản");
@@ -114,9 +114,9 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
                 btnQuanLyTaiKhoanActionPerformed(evt);
             }
         });
-        getContentPane().add(btnQuanLyTaiKhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 350, 250, 40));
+        getContentPane().add(btnQuanLyTaiKhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 250, 40));
 
-        btnDoanhThu.setBackground(new java.awt.Color(102, 102, 102));
+        btnDoanhThu.setBackground(new java.awt.Color(153, 153, 153));
         btnDoanhThu.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnDoanhThu.setForeground(new java.awt.Color(0, 51, 51));
         btnDoanhThu.setText("Thống Kê Doanh Thu");
@@ -127,7 +127,7 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
         });
         getContentPane().add(btnDoanhThu, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, 250, 40));
 
-        btnQuanLyChiTieu.setBackground(new java.awt.Color(102, 102, 102));
+        btnQuanLyChiTieu.setBackground(new java.awt.Color(153, 153, 153));
         btnQuanLyChiTieu.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnQuanLyChiTieu.setForeground(new java.awt.Color(0, 51, 51));
         btnQuanLyChiTieu.setText("Quản Lý Chi Tiêu");
@@ -136,9 +136,9 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
                 btnQuanLyChiTieuActionPerformed(evt);
             }
         });
-        getContentPane().add(btnQuanLyChiTieu, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 450, 250, 40));
+        getContentPane().add(btnQuanLyChiTieu, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 250, 40));
 
-        btnBanAn.setBackground(new java.awt.Color(102, 102, 102));
+        btnBanAn.setBackground(new java.awt.Color(153, 153, 153));
         btnBanAn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnBanAn.setForeground(new java.awt.Color(0, 51, 51));
         btnBanAn.setText("Quản Lý Bàn ");
@@ -151,9 +151,9 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
 
         lblThoiGian.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lblThoiGian.setForeground(new java.awt.Color(255, 255, 255));
-        getContentPane().add(lblThoiGian, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 480, 30));
+        getContentPane().add(lblThoiGian, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 480, 30));
 
-        ptnLichSu1.setBackground(new java.awt.Color(102, 102, 102));
+        ptnLichSu1.setBackground(new java.awt.Color(153, 153, 153));
         ptnLichSu1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         ptnLichSu1.setForeground(new java.awt.Color(0, 51, 51));
         ptnLichSu1.setText("Lịch Sử");
@@ -164,7 +164,7 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
         });
         getContentPane().add(ptnLichSu1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, 250, 40));
 
-        btnQuanLyChamCong.setBackground(new java.awt.Color(102, 102, 102));
+        btnQuanLyChamCong.setBackground(new java.awt.Color(153, 153, 153));
         btnQuanLyChamCong.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnQuanLyChamCong.setForeground(new java.awt.Color(0, 51, 51));
         btnQuanLyChamCong.setText("Chấm Công Nhân Viên");
@@ -173,10 +173,10 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
                 btnQuanLyChamCongActionPerformed(evt);
             }
         });
-        getContentPane().add(btnQuanLyChamCong, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 400, 250, 40));
+        getContentPane().add(btnQuanLyChamCong, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 250, 40));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/hinhnen.png"))); // NOI18N
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 560));
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/tranhgiaodien (3).png"))); // NOI18N
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 570));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -218,22 +218,7 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
         this.showQuanLyChamCong(null);  // TODO add your handling code here:
     }//GEN-LAST:event_btnQuanLyChamCongActionPerformed
   
-//    public static void main(String args[]) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                QuanLyNhaHang dialog = new QuanLyNhaHang(new javax.swing.JFrame(), true);
-//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//                    @Override
-//                    public void windowClosing(java.awt.event.WindowEvent e) {
-//                        System.exit(0);
-//                    }
-//                });
-//                
-//                dialog.setVisible(true);
-//                
-//            }
-//        });
-//    }
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -6,7 +6,6 @@ package Itf;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-//import ui.manager.QuanLyBanAn;
 import ui.manager.QuanLyMonAn;
 import ui.manager.QuanLyTaiKhoan;
 import ui.manager.BanAn;

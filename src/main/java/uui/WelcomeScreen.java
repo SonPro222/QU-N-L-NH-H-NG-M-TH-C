@@ -48,10 +48,6 @@ public class WelcomeScreen extends JWindow {
         g2d.setStroke(new BasicStroke(5));
         g2d.drawArc(125, 125, 150, 150, 0, 360);
 
-//        g2d.setColor(new Color(0, 255, 0));
-//        g2d.setStroke(new BasicStroke(5));
-//        
-//        g2d.drawArc(125, 125, 150, 150, 0, 360);
         // Vẽ phần trăm
         String percentText = progressValue + "%";
         g2d.setFont(new Font("Arial", Font.BOLD, 30));

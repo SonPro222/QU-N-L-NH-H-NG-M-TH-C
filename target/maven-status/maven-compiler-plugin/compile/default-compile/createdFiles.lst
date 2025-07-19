@@ -47,6 +47,7 @@ ui\manager\QuanLyNhanVien$3.class
 ui\manager\QuanLyMonAn$20.class
 dao\impl\ChiTieuDaoImpl.class
 dao\impl\PhieuTraLuongDAOImpl.class
+ui\manager\QuanLyNhanVien$4.class
 util\XIcon.class
 entity\HoaDon.class
 ui\manager\QuanLyTaiKhoan$6.class
@@ -75,7 +76,6 @@ ui\manager\QuanLyMonAn$14.class
 ui\manager\QuanLyNhaHang$6.class
 dao\impl\LichSuGiaoDichDAOImpl.class
 ui\manager\QuanLyMonAn$6.class
-ui\manager\QuanLyNhanVien$3$1.class
 entity\HoaDonChiTiet.class
 ui\manager\QuanLyChamCongNhanVien$3.class
 ui\manager\QuanLyMonAn$17.class
@@ -87,6 +87,7 @@ ui\manager\QuanLyTaiKhoan.class
 dao\MonAnDAO.class
 ui\manager\DatMon$11.class
 uui\Login$4.class
+uui\KieuChuDep.class
 ui\manager\QuanLyChiTieu$1.class
 ui\manager\QuanLyMonAn$24.class
 ui\manager\QuanLyMonAn$5.class
@@ -135,6 +136,7 @@ ui\manager\ThongKeDoanhThu.class
 ui\manager\DatMon$10.class
 ui\manager\xLichSuGiaoDich$1.class
 ui\manager\BanAn$1.class
+ui\manager\QuanLyNhanVien$4$1.class
 entity\PhieuTraLuong.class
 ui\manager\QuanLyChamCongNhanVien$1.class
 ui\manager\DatMon$4.class
