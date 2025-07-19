@@ -11,6 +11,7 @@ public interface NhanVienDAO {
     List<NhanVien> findAll();
     List<NhanVien> selectBySql(String sql, Object... args);
 public List<Object[]> findAllWithUsername();
+ String getTenNVFromMaNV(int maNV);
 public int insertAndReturnId(NhanVien nv);
     // thêm hàm này để login hoạt động đúng
 //    NhanVien findByTenDangNhap(String tenDangNhap);

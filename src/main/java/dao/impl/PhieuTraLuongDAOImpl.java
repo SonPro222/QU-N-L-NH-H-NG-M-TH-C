@@ -10,6 +10,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import util.XJdbc;
+import java.util.Date;
 
 public class PhieuTraLuongDAOImpl implements PhieuTraLuongDAO {
 
@@ -59,33 +60,49 @@ public class PhieuTraLuongDAOImpl implements PhieuTraLuongDAO {
         return selectBySql(SELECT_BY_MANV_SQL, maNV);
     }
 
-   @Override
-public List<PhieuTraLuong> findAll() {
-    String sql = "SELECT phieu.MaPhieuLuong, phieu.MaNV, nv.TenNV, phieu.NgayThanhToan, phieu.TongLuong, phieu.LuongTru, phieu.GhiChu " +
-                 "FROM PHIEUTRALUONG phieu " +
-                 "JOIN NHANVIEN nv ON phieu.MaNV = nv.MaNV";
+    @Override
+    public List<PhieuTraLuong> findAll() {
+        String sql = "SELECT phieu.MaPhieuLuong, phieu.MaNV, nv.TenNV, phieu.NgayThanhToan, phieu.TongLuong, phieu.LuongTru, phieu.GhiChu "
+                + "FROM PHIEUTRALUONG phieu "
+                + "JOIN NHANVIEN nv ON phieu.MaNV = nv.MaNV";
 
-    return selectBySql(sql);
-}
-
- private List<PhieuTraLuong> selectBySql(String sql, Object... args) {
-    List<PhieuTraLuong> list = new ArrayList<>();
-    try (ResultSet rs = XJdbc.executeQuery(sql, args)) {
-        while (rs.next()) {
-            PhieuTraLuong phieu = new PhieuTraLuong();
-            phieu.setMaPhieuLuong(rs.getInt("MaPhieuLuong"));
-            phieu.setMaNV(rs.getInt("MaNV"));
-            phieu.setTenNV(rs.getString("TenNV"));  // Lấy tên nhân viên từ bảng NHANVIEN
-            phieu.setNgayThanhToan(rs.getDate("NgayThanhToan"));
-            phieu.setTongLuong(rs.getDouble("TongLuong"));
-            phieu.setLuongTru(rs.getDouble("LuongTru"));
-            phieu.setGhiChu(rs.getString("GhiChu"));
-            list.add(phieu);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return selectBySql(sql);
     }
-    return list;
-}
+
+    private List<PhieuTraLuong> selectBySql(String sql, Object... args) {
+        List<PhieuTraLuong> list = new ArrayList<>();
+        try (ResultSet rs = XJdbc.executeQuery(sql, args)) {
+            while (rs.next()) {
+                PhieuTraLuong phieu = new PhieuTraLuong();
+                phieu.setMaPhieuLuong(rs.getInt("MaPhieuLuong"));
+                phieu.setMaNV(rs.getInt("MaNV"));
+                phieu.setTenNV(rs.getString("TenNV"));  // Lấy tên nhân viên từ bảng NHANVIEN
+                phieu.setNgayThanhToan(rs.getDate("NgayThanhToan"));
+                phieu.setTongLuong(rs.getDouble("TongLuong"));
+                phieu.setLuongTru(rs.getDouble("LuongTru"));
+                phieu.setGhiChu(rs.getString("GhiChu"));
+                list.add(phieu);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public List<PhieuTraLuong> findByMaNVAndNgay(int maNV, Date tuNgay, Date denNgay) {
+        String sql = """
+        SELECT phieu.MaPhieuLuong, phieu.MaNV, nv.TenNV, phieu.NgayThanhToan,
+               phieu.TongLuong, phieu.LuongTru, phieu.GhiChu
+        FROM PHIEUTRALUONG phieu
+        JOIN NHANVIEN nv ON phieu.MaNV = nv.MaNV
+        WHERE phieu.MaNV = ? AND phieu.NgayThanhToan BETWEEN ? AND ?
+    """;
+        return selectBySql(sql,
+                maNV,
+                new java.sql.Date(tuNgay.getTime()),
+                new java.sql.Date(denNgay.getTime())
+        );
+    }
 
 }
