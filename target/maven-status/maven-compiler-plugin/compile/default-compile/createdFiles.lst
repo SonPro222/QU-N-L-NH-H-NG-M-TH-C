@@ -29,6 +29,7 @@ ui\manager\DatMon$8.class
 ui\manager\QuanLyChamCongNhanVien$5.class
 ui\manager\QuanLyMonAn$22.class
 entity\ChiTieu.class
+uui\WelcomeScreen.class
 ui\manager\QuanLyNhaHang$9.class
 util\ExcelExporter.class
 ui\manager\DatMon$2.class
@@ -60,7 +61,6 @@ uui\Login$2.class
 ui\manager\QuanLyMonAn$13.class
 ui\manager\QuanLyTaiKhoan$8.class
 ui\manager\QuanLyMonAn$15.class
-ui\manager\QuanLyNhaHang$10$1.class
 util\XStr.class
 ui\manager\QuanLyNhaHang$7.class
 dao\ChiTieuDao.class
@@ -144,7 +144,6 @@ entity\ChamCong.class
 ui\manager\xLichSuGiaoDich$2.class
 ui\manager\xLichSuGiaoDich.class
 dao\impl\ChiTietMonAnDAOImpl.class
-ui\manager\QuanLyNhaHang$10.class
 ui\manager\BanAn$2.class
 ui\manager\DatMon$5.class
 ui\manager\QuanLyChamCongNhanVien$2.class

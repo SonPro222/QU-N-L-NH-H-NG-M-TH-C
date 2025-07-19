@@ -25,6 +25,7 @@ public class Login extends javax.swing.JDialog {
         setTitle("Đăng Nhập");
         setResizable(false);
         setLocationRelativeTo(null);
+        
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
