@@ -14,4 +14,5 @@ public class ChamCong {
     private Date ngayCham;
     private boolean coMat;
     private String ghiChu;
+    
 }

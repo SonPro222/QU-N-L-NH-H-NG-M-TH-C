@@ -19,12 +19,17 @@ import entity.PhieuTraLuong;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.apache.poi.ss.usermodel.Row;
@@ -211,11 +216,10 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         int month = calendar.get(Calendar.MONTH) + 1;  // Tháng
         int year = calendar.get(Calendar.YEAR);
 
-        if (calendar.get(Calendar.DAY_OF_MONTH) != 1) {
-            JOptionPane.showMessageDialog(null, "Lương chỉ được trả vào ngày 1 của mỗi tháng.");
-            return;
-        }
-
+//        if (calendar.get(Calendar.DAY_OF_MONTH) != 1) {
+//            JOptionPane.showMessageDialog(null, "Lương chỉ được trả vào ngày 1 của mỗi tháng.");
+//            return;
+//        }
         List<NhanVien> listNV = nhanVienDAO.findAll();
 
         // Khởi tạo Workbook cho Excel
@@ -293,7 +297,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        fillPhieuTraLuongToTable();
         JOptionPane.showMessageDialog(null, "Lương đã được trả cho tất cả nhân viên và xuất Excel thành công.");
     }
 
@@ -323,6 +327,130 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         }
     }
 
+    public void loc() {
+        String maNVStr = txtMaNV.getText().trim();
+        String tenNVKeyword = txtTennhanvien.getText().trim().toLowerCase();
+        String thangNamStr = txtNgaythanhtoan.getText().trim(); // yyyy/MM
+
+        Integer maNV = null;
+        if (!maNVStr.isEmpty()) {
+            try {
+                maNV = Integer.parseInt(maNVStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Mã nhân viên phải là số.");
+                return;
+            }
+        }
+
+        Date tuNgay = null, denNgay = null;
+        if (!thangNamStr.isEmpty()) {
+            tuNgay = XDate.parse("01/" + thangNamStr, "dd/yyyy/MM");
+            if (tuNgay == null) {
+                JOptionPane.showMessageDialog(this, "Tháng thanh toán sai định dạng. Ví dụ: 2025/07");
+                return;
+            }
+            LocalDate start = tuNgay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+            denNgay = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }
+
+        // 🔍 Gọi DAO hoặc lấy tất cả
+        List<PhieuTraLuong> list;
+        if (maNV != null && tuNgay != null && denNgay != null) {
+            list = phieuTraLuongDAO.findByMaNVAndNgay(maNV, tuNgay, denNgay);
+        } else {
+            list = phieuTraLuongDAO.findAll();
+        }
+
+        // ✅ Lọc thêm theo tên nhân viên (nếu nhập)
+        if (!tenNVKeyword.isEmpty()) {
+            list = list.stream()
+                    .filter(p -> p.getTenNV().toLowerCase().contains(tenNVKeyword))
+                    .toList();
+        }
+
+        // 📋 Hiển thị dữ liệu ra bảng
+        DefaultTableModel model = (DefaultTableModel) tblBangLuongChiTiet1.getModel();
+        model.setRowCount(0);
+        for (PhieuTraLuong phieu : list) {
+            model.addRow(new Object[]{
+                phieu.getMaPhieuLuong(),
+                phieu.getMaNV(),
+                phieu.getTenNV(),
+                XDate.format(phieu.getNgayThanhToan(), "dd/MM/yyyy"),
+                phieu.getLuongTru(),
+                phieu.getTongLuong(),
+                phieu.getGhiChu()
+            });
+        }
+
+        if (list.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy phiếu trả lương phù hợp.");
+        }
+    }
+ private void fillBangLuong1() {
+    DefaultTableModel model = (DefaultTableModel) tblBangLuong.getModel();
+    model.setRowCount(0); // Xóa dữ liệu cũ
+
+    String maNVStr = txtMaNhanVien.getText().trim();
+    String tenNVKeyword = txtTenNhanVien.getText().trim().toLowerCase();
+
+    Integer maNVFilter = null;
+    if (!maNVStr.isEmpty()) {
+        try {
+            maNVFilter = Integer.parseInt(maNVStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã nhân viên phải là số nguyên.");
+            return;
+        }
+    }
+
+    ChamCongService chamCongService = new ChamCongService();
+    LocalDate now = LocalDate.now();
+    int thang = now.getMonthValue();
+    int nam = now.getYear();
+
+    List<Object[]> allData = chamCongService.thongKeCongVaLuongTheoThang(thang, nam);
+    List<Object[]> filtered = new ArrayList<>();
+
+    for (Object[] row : allData) {
+        Integer maNVData;
+        String tenNVData;
+
+        try {
+            maNVData = Integer.valueOf(row[0].toString().trim());
+        } catch (Exception e) {
+            continue;
+        }
+
+        tenNVData = (row[1] != null) ? row[1].toString().toLowerCase() : "";
+
+        boolean matchMa = (maNVFilter == null) || maNVData.equals(maNVFilter);
+        boolean matchTen = tenNVKeyword.isEmpty() || tenNVData.contains(tenNVKeyword);
+
+        if (matchMa && matchTen) {
+            filtered.add(row);
+        }
+    }
+
+    for (Object[] row : filtered) {
+        model.addRow(new Object[]{
+            row[0], // Mã NV
+            row[1], // Tên NV
+            row[2], // Ngày bắt đầu
+            row[3], // Số ngày làm
+            row[4], // Số ngày nghỉ
+            row[5], // Trừ lương
+            row[6]  // Tổng lương
+        });
+    }
+
+    if (filtered.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên phù hợp.");
+    }
+}
+
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -337,9 +465,22 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblBangLuong = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        txtTenNhanVien = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        txtMaNhanVien = new javax.swing.JTextField();
+        btnBangLuong = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         tblBangLuongChiTiet1 = new javax.swing.JTable();
+        btnLocbangluong = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        txtMaNV = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txtTennhanvien = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtNgaythanhtoan = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -446,6 +587,37 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 410, -1, -1));
 
+        jLabel6.setText("Tên Nhân Viên :");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 420, -1, -1));
+
+        txtTenNhanVien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTenNhanVienActionPerformed(evt);
+            }
+        });
+        jPanel1.add(txtTenNhanVien, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 410, 130, -1));
+
+        jLabel7.setText("Mã Nhân Viên :");
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 420, -1, -1));
+
+        jLabel8.setText("Mã Nhân Viên :");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 420, -1, -1));
+
+        txtMaNhanVien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMaNhanVienActionPerformed(evt);
+            }
+        });
+        jPanel1.add(txtMaNhanVien, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 410, 130, -1));
+
+        btnBangLuong.setText("Lọc");
+        btnBangLuong.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBangLuongActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnBangLuong, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 410, -1, -1));
+
         jTabbedPane1.addTab("Chấm Công", jPanel1);
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -479,6 +651,32 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
 
         jPanel3.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 900, 350));
 
+        btnLocbangluong.setText("Lọc");
+        btnLocbangluong.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLocbangluongActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnLocbangluong, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 390, -1, -1));
+
+        jLabel3.setText("MaNV : ");
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 400, -1, -1));
+
+        txtMaNV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMaNVActionPerformed(evt);
+            }
+        });
+        jPanel3.add(txtMaNV, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 390, 90, -1));
+
+        jLabel4.setText("Tên Nhân Viên :");
+        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 400, -1, -1));
+        jPanel3.add(txtTennhanvien, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 390, 150, -1));
+
+        jLabel5.setText("Ngày Thanh Toán :");
+        jPanel3.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 400, -1, -1));
+        jPanel3.add(txtNgaythanhtoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 390, 130, -1));
+
         jTabbedPane1.addTab("Bảng Lương Chi Tiết", jPanel3);
 
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 30, 900, 480));
@@ -497,12 +695,42 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         paySalary();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void txtMaNVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaNVActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMaNVActionPerformed
+
+    private void btnLocbangluongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocbangluongActionPerformed
+        loc(); // TODO add your handling code here:
+
+    }//GEN-LAST:event_btnLocbangluongActionPerformed
+
+    private void btnBangLuongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBangLuongActionPerformed
+        // TODO add your handling code here:
+        fillBangLuong1();
+
+    }//GEN-LAST:event_btnBangLuongActionPerformed
+
+    private void txtTenNhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenNhanVienActionPerformed
+    }//GEN-LAST:event_txtTenNhanVienActionPerformed
+
+    private void txtMaNhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaNhanVienActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMaNhanVienActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBangLuong;
     private javax.swing.JButton btnChamCong;
+    private javax.swing.JButton btnLocbangluong;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
@@ -512,6 +740,11 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
     private javax.swing.JTable tblBangLuong;
     private javax.swing.JTable tblBangLuongChiTiet1;
     private javax.swing.JTable tblChamCong;
+    private javax.swing.JTextField txtMaNV;
+    private javax.swing.JTextField txtMaNhanVien;
     private javax.swing.JTextField txtNgayHienTai;
+    private javax.swing.JTextField txtNgaythanhtoan;
+    private javax.swing.JTextField txtTenNhanVien;
+    private javax.swing.JTextField txtTennhanvien;
     // End of variables declaration//GEN-END:variables
 }

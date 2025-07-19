@@ -6,6 +6,7 @@ package dao;
 
 
 import entity.PhieuTraLuong;
+import java.util.Date;
 import java.util.List;
 
 public interface PhieuTraLuongDAO {
@@ -15,4 +16,6 @@ public interface PhieuTraLuongDAO {
     PhieuTraLuong findById(int maPhieuLuong);
     List<PhieuTraLuong> findByMaNV(int maNV);
     List<PhieuTraLuong> findAll();
+    
+    List<PhieuTraLuong> findByMaNVAndNgay(int maNV, Date tuNgay, Date denNgay);
 }
