@@ -51,7 +51,6 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         initComponents();
         fillTableChamCongTheoNhanVien();
         fillNgayHienTai();
-
         fillBangLuongTheoThang(thang, nam);
         setResizable(false);          // <-- không cho kéo giãn
         setLocationRelativeTo(null);
@@ -293,7 +292,7 @@ public class QuanLyChamCongNhanVien extends javax.swing.JDialog {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        fillPhieuTraLuongToTable();
         JOptionPane.showMessageDialog(null, "Lương đã được trả cho tất cả nhân viên và xuất Excel thành công.");
     }
 
