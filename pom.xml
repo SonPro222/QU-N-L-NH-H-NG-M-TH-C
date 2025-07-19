@@ -74,7 +74,7 @@
                             </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>ui.manager.QuanLyNhaHang</mainClass>
+                                    <mainClass>uii.MainApp</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
@@ -86,7 +86,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
-        <exec.mainClass>ui.manager.QuanLyNhaHang</exec.mainClass>
+        <exec.mainClass>uii.MainApp</exec.mainClass>
     </properties>
     <name>QuanLyNhaHangAmThucVietNam</name>
 </project>

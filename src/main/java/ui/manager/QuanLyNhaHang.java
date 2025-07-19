@@ -218,22 +218,7 @@ public class QuanLyNhaHang extends javax.swing.JDialog implements QuanLyNhaHangC
         this.showQuanLyChamCong(null);  // TODO add your handling code here:
     }//GEN-LAST:event_btnQuanLyChamCongActionPerformed
   
-//    public static void main(String args[]) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                QuanLyNhaHang dialog = new QuanLyNhaHang(new javax.swing.JFrame(), true);
-//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//                    @Override
-//                    public void windowClosing(java.awt.event.WindowEvent e) {
-//                        System.exit(0);
-//                    }
-//                });
-//                
-//                dialog.setVisible(true);
-//                
-//            }
-//        });
-//    }
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
